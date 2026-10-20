@@ -10,8 +10,8 @@ D = os.path.join(HERE, 'data')
 t = pd.read_csv(f'{RAW}/ar9050.csv')
 t['month'] = pd.to_datetime(t.rptdate).dt.to_period('M').dt.to_timestamp()
 g = lambda i: t[f'c{4*i+1}']
-t['total'] = sum(g(i) for i in range(24))
-t['w21'] = sum(g(i) for i in range(6))
+t['total'] = g(0) + g(1)            # pair 0 = all first payments
+t['w21'] = sum(g(i) for i in range(2, 8))  # pairs 1-3 = 0-7, 8-14, 15-21 days
 t = t[t.month >= '2013-01-01'][['st', 'month', 'total', 'w21']]
 peers = {'MD': ['MD'], 'VA': ['VA'], 'PA': ['PA'], 'DC': ['DC'], 'US pool': None}
 roll = {}

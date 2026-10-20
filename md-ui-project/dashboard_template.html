@@ -19,7 +19,7 @@ nav{display:flex;gap:8px;margin-bottom:16px}nav a{padding:6px 14px;border-radius
 </style></head><body><div class="wrap">
 <h1>Are Maryland's Unemployed Getting Paid Within 21 Days?</h1>
 <p class="sub">Maryland Department of Labor · Unemployment Insurance first-payment timeliness · Federal standard: <b>87%</b> of first payments within 21 days · Data through <span id="asof"></span></p>
-<nav><a class="on" href="dashboard.html">Executive overview</a><a href="analytics_dashboard.html">Analytics deep dive</a></nav>
+<nav><a class="on" href="dashboard.html">Executive overview</a><a href="analytics_dashboard.html">Analytics deep dive</a><a href="department.html">Inside MD Labor</a></nav>
 <div class="kpis" id="kpis"></div>
 <div class="grid">
  <div class="card full"><h2>Share of first payments made within 21 days</h2><p class="note">Monthly, 2015 to date. Dashed line = 87% federal standard. The pandemic collapse never fully recovered.</p><div class="box tall"><canvas id="c1"></canvas></div></div>
@@ -30,7 +30,7 @@ nav{display:flex;gap:8px;margin-bottom:16px}nav a{padding:6px 14px;border-radius
   <ul>
    <li><b>Measure the right clock.</b> Split delay into agency-caused (adjudication, identity verification, employer response) versus claimant-caused (backdating, late certification). The state says backdating inflates the federal metric; this lets us prove it or fix it.</li>
    <li><b>Early-warning model.</b> Forecast weekly initial claims and flag weeks where projected workload will push the 21-day rate below 87%, so staff can be redeployed <i>before</i> a backlog forms.</li>
-   <li><b>Attack the long tail.</b> About one in five payments is late. A small share of claims with issues (identity checks, separation disputes) likely drives the 29+ day tail; target those queues with a root-cause dashboard.</li>
+   <li><b>Attack the long tail.</b> More than one in four payments is late, and about one in thirteen takes over 70 days. A small share of claims with issues (identity checks, separation disputes) likely drives that long tail; target those queues with a root-cause dashboard.</li>
    <li><b>Operational dashboard.</b> Weekly intake, age of pending claims, % paid in 14 / 21 days, by issue type and region, with the 87% target on every chart.</li>
   </ul></div>
 </div>
@@ -59,10 +59,10 @@ const base={maintainAspectRatio:false,plugins:{legend:{display:false}}};
 new Chart('c1',{type:'line',data:{labels:M.map(r=>r.month),datasets:[
  {label:'% within 21 days',data:M.map(r=>r.pct21),borderColor:C.blue,backgroundColor:C.blue,pointRadius:0,borderWidth:2,tension:.2},
  {label:'Federal standard (87%)',data:M.map(()=>87),borderColor:C.red,borderDash:[6,5],pointRadius:0,borderWidth:1.5}]},
- options:{...base,plugins:{legend:{display:true,position:'bottom'}},scales:{y:{min:40,max:100,ticks:{callback:v=>v+'%'}},x:{ticks:{maxTicksLimit:12,callback:function(v){return this.getLabelForValue(v).slice(0,4)}}}},interaction:{mode:'index',intersect:false}}});
+ options:{...base,plugins:{legend:{display:true,position:'bottom'}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%'}},x:{ticks:{maxTicksLimit:12,callback:function(v){return this.getLabelForValue(v).slice(0,4)}}}},interaction:{mode:'index',intersect:false}}});
 const nb={VA:1,PA:1,DE:1,WV:1,DC:1};
 new Chart('c2',{type:'bar',data:{labels:D.states.map(s=>s.st),datasets:[{data:D.states.map(s=>s.pct21),backgroundColor:D.states.map(s=>s.st==='MD'?C.red:nb[s.st]?C.blue:C.gray)}]},
- options:{...base,scales:{y:{min:40,max:100,ticks:{callback:v=>v+'%'}},x:{ticks:{font:{size:9},autoSkip:false,maxRotation:90}}},
+ options:{...base,scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%'}},x:{ticks:{font:{size:9},autoSkip:false,maxRotation:90}}},
  plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+'%  (rank '+D.states[c.dataIndex].rank+')'}}}}});
 new Chart('c3',{type:'bar',data:{labels:D.bands.map(b=>b.days+' days'),datasets:[{data:D.bands.map(b=>b.pct),backgroundColor:D.bands.map((b,i)=>i<3?C.green:i<5?C.gold:C.red)}]},
  options:{...base,scales:{y:{ticks:{callback:v=>v+'%'}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+'% ('+fmt(D.bands[c.dataIndex].payments)+' payments)'}}}}});

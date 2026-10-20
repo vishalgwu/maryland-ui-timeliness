@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inside Maryland Labor</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#14213d;--mute:#5c6b7a;--line:#e3e7ec;--red:#c8102e;--gold:#e0a100;--green:#2a9d6f;--blue:#1d4e89;--gray:#c4cbd3;--soft:#fdf6e3}
+@media (prefers-color-scheme:dark){:root{--bg:#10151c;--card:#1a212b;--ink:#eef2f6;--mute:#9aa8b6;--line:#2b3542;--gray:#46515e;--blue:#6aa9ee;--soft:#262a2b}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:26px;margin:0}h2{font-size:16px;margin:0 0 2px}h3{font-size:15px;margin:14px 0 4px}.sub{color:var(--mute);margin:4px 0 14px}
+nav{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}nav a,.tabs button{padding:6px 14px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;font:inherit;font-size:14px;background:var(--card);cursor:pointer}
+nav a.on,.tabs button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.tabs{display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.full{grid-column:1/-1}.note{color:var(--mute);font-size:13px;margin:0 0 10px}
+.box{position:relative;height:300px}
+.div{cursor:pointer;text-align:left;font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.div:hover,.div.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold) inset}.div b{display:block}.div span{color:var(--mute);font-size:13px}
+.detail{background:var(--soft);border:1px solid var(--gold);border-radius:12px;padding:14px 16px;margin-top:12px}
+.kpi .v{font-size:28px;font-weight:700;line-height:1.1}.kpi .l{color:var(--mute);font-size:13px}.kpi .n{font-size:12px;color:var(--mute);margin-top:4px}
+.panel{display:none}.panel.on{display:block}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:820px){.pair{grid-template-columns:1fr}}
+.ch{border-left:4px solid var(--red);padding:2px 12px}.rs{border-left:4px solid var(--green);padding:2px 12px}.an{border-left:4px solid var(--blue);padding:2px 12px;background:var(--bg);border-radius:0 8px 8px 0}
+.tl{display:flex;gap:0;overflow-x:auto;padding:6px 0 10px}.tl button{flex:1 0 130px;font:inherit;color:inherit;background:none;border:none;border-top:3px solid var(--line);padding:10px 8px 0;text-align:left;cursor:pointer}
+.tl button.on{border-top-color:var(--red)}.tl b{display:block;font-size:13px}.tl span{color:var(--mute);font-size:12px}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}th:first-child,td:first-child{text-align:left}th{color:var(--mute);font-weight:500}
+.foot{color:var(--mute);font-size:12px;margin-top:20px}
+</style></head><body><div class="wrap">
+<h1>Inside Maryland Labor: What the Department Is Doing</h1>
+<p class="sub">Divisions, unemployment insurance priorities, fraud and overpayment work, and wage enforcement, with the public data behind them</p>
+<nav><a href="dashboard.html">Executive overview</a><a href="analytics_dashboard.html">Analytics deep dive</a><a class="on" href="department.html">Inside MD Labor</a></nav>
+<div class="tabs" id="tabs"></div>
+
+<section class="panel" id="p-who">
+ <div class="card"><h2>Mission</h2><p style="margin:4px 0 0">Connect Marylanders to good jobs, protect workers, consumers and the public, support Maryland businesses, and foster economic growth and competitiveness.</p></div>
+ <h3>Eight divisions: click one</h3>
+ <div class="g4" id="divs"></div>
+ <div class="detail" id="divd"></div>
+</section>
+
+<section class="panel" id="p-ui">
+ <div class="g4" id="uikpi"></div>
+ <div class="grid" style="margin-top:12px">
+  <div class="card"><h2>UI claims filed per quarter</h2><p class="note">Department-reported (ETA 5159). Claim volume has been steady; the 2020 peak was 885,937 in a single quarter.</p><div class="box"><canvas id="d1"></canvas></div></div>
+  <div class="card"><h2>First payments within 21 days, by year</h2><p class="note">My calculation from ETA 9050; it closely matches the department's own chart. Dashed = 87% standard.</p><div class="box"><canvas id="d2"></canvas></div></div>
+ </div>
+ <div class="card" style="margin-top:12px"><h2>How employers fund UI</h2><p class="note">UI is paid for by employer taxes, not by workers.</p>
+  <ul style="margin:0;padding-left:20px"><li>Employers pay into the Unemployment Insurance Trust Fund based on quarterly wage reports.</li><li>Rate = statewide tax table (A through F, set by Trust Fund balance) combined with the employer's experience rate (benefits paid to former staff versus taxable wages).</li><li>2026: Tax Table A, $25.50 to $637.50 per employee on an $8,500 taxable wage base. New employers typically start at 2.3% to 2.6%.</li><li>Employers who fail to file required reports get the highest rate in the current table.</li></ul></div>
+</section>
+
+<section class="panel" id="p-ch">
+ <p class="note">Pick a challenge to see the department's stated response and where data analytics can help.</p>
+ <div class="tabs" id="chs"></div>
+ <div class="card" id="chbody"></div>
+ <div class="grid" style="margin-top:12px">
+  <div class="card"><h2>New suspected ID-fraud claims as a share of UI claims</h2><p class="note">Department-reported, by quarter. Before 2020 this was under 1%.</p><div class="box"><canvas id="d3"></canvas></div></div>
+  <div class="card"><h2>Fraud share vs. on-time payments</h2><p class="note" id="fvnote"></p><div class="box"><canvas id="d4"></canvas></div></div>
+ </div>
+</section>
+
+<section class="panel" id="p-ov">
+ <div class="card"><h2>Overpayment recovery timeline</h2><p class="note">Click a milestone. Overpayments are benefits paid to people who were not eligible, including through identity theft.</p>
+  <div class="tl" id="tl"></div><div class="detail" id="tld" style="margin-top:4px"></div></div>
+ <div class="grid" style="margin-top:12px">
+  <div class="card"><h2>The legal framework</h2><ul style="margin:4px 0 0;padding-left:20px"><li>Federal law requires recovery, subject to state law.</li><li>Overpayments must be established within 3 years; those older than 5 years may be deemed uncollectible.</li><li>Recovered trust-fund money returns to the fund; CARES Act money returns to the federal government. None goes to Maryland's General Fund.</li></ul></div>
+  <div class="card"><h2>Help for claimants who get a notice</h2><ul style="margin:4px 0 0;padding-left:20px"><li>Report identity theft to remove the payment from their account.</li><li>Verify identity, dispute and appeal, request a hardship waiver, or repay.</li><li>In-person help at headquarters and three American Job Centers; a call-back line within one business day.</li></ul></div>
+ </div>
+</section>
+
+<section class="panel" id="p-wage">
+ <div class="grid">
+  <div class="card"><h2>Wages recovered for workers</h2><p class="note">Prevailing wage and wage-and-hour enforcement combined, by fiscal year (FY2026 is first half only).</p><div class="box"><canvas id="d5"></canvas></div></div>
+  <div class="card"><h2>Workplace Fraud Act enforcement</h2><p class="note">Worker misclassification (construction and landscaping). Blank years had no reported activity.</p><div id="wf"></div>
+   <p class="note" style="margin-top:10px">The Joint Enforcement Task Force on Workplace Fraud, re-established in January 2024 and chaired by the Secretary of Labor, brings together the Comptroller, Attorney General, Insurance Administration, Workers' Compensation Commission, the State Department of Assessments and Taxation, and three MD Labor divisions.</p></div>
+ </div>
+</section>
+
+<p class="foot"><b>Sources and caveats:</b> Department figures come from the Maryland Department of Labor's briefing to the House Government, Labor and Elections Committee (Feb 10, 2026) and were read from its slides; the department's numbers are its own. Timeliness figures are my calculation from the public US DOL ETA 9050 file. This is an independent analytical project, not affiliated with or endorsed by the department. Correlations are descriptive and based on few data points; they are not evidence of cause.</p>
+</div>
+<script>/*CHARTJS*/</script>
+<script>
+const D=/*DATA*/;
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const C={red:css('--red'),gold:css('--gold'),green:css('--green'),blue:css('--blue'),gray:css('--gray'),mute:css('--mute'),line:css('--line')};
+Chart.defaults.color=C.mute;Chart.defaults.borderColor=C.line;Chart.defaults.font.family='system-ui,Segoe UI,sans-serif';
+const fmt=n=>Math.round(n).toLocaleString('en-US'),base={maintainAspectRatio:false,plugins:{legend:{display:false}}};
+const $=id=>document.getElementById(id);
+// ---- tabs
+const TABS=[['who','Who they are'],['ui','UI at a glance'],['ch','Challenges and responses'],['ov','Overpayment recovery'],['wage','Wage enforcement']];
+const built={};
+function show(id){TABS.forEach(t=>{$('p-'+t[0]).classList.toggle('on',t[0]===id)});[...$('tabs').children].forEach((b,i)=>b.classList.toggle('on',TABS[i][0]===id));if(!built[id]){built[id]=1;({ui:buildUI,ch:buildCh,wage:buildWage})[id]?.()}}
+$('tabs').innerHTML=TABS.map(t=>`<button onclick="show('${t[0]}')">${t[1]}</button>`).join('');
+// ---- divisions
+const DIV=[['Unemployment Insurance','Temporary wage replacement for workers who lose jobs through no fault of their own, plus employer tax collection and compliance with UI law.'],
+['Labor and Industry','Enforces wage and hour standards, occupational safety and health, and other workplace protections. Includes the Wage and Labor Standards Unit.'],
+['Occupational and Professional Licensing','Licenses and oversees a wide range of professions so practitioners meet standards for competence, safety and consumer protection.'],
+['Office of Financial Regulation','Supervises banks, lenders, money transmitters and consumer financial products to protect consumers and market stability.'],
+['Workforce Development and Adult Education','Training, career services and adult education so Marylanders can gain skills, credentials and employment.'],
+['Family and Medical Leave Insurance','Runs Maryland\'s paid family and medical leave program: wage replacement during qualifying life and health events.'],
+['Governor\'s Workforce Development Board','State workforce policy and coordination body aligning education, training and economic development with employer needs.'],
+['Horse Racing Commission','Regulates Maryland horse racing for integrity, animal welfare and legal compliance.']];
+$('divs').innerHTML=DIV.map((d,i)=>`<button class="div" onclick="pickDiv(${i})"><b>${d[0]}</b></button>`).join('');
+function pickDiv(i){[...$('divs').children].forEach((b,j)=>b.classList.toggle('on',i===j));$('divd').innerHTML=`<b>${DIV[i][0]}</b><p style="margin:4px 0 0">${DIV[i][1]}</p>`+(i===0?'<p class="note" style="margin:8px 0 0">This is the division the rest of this project measures. See the Executive overview and Analytics deep dive pages.</p>':'')}
+pickDiv(0);
+// ---- UI tab
+function buildUI(){
+ const cq=D.claims_q,vals=Object.values(cq),a=D.annual;
+ $('uikpi').innerHTML=[['Weekly benefit range','$50 to $430','up to 26 weeks; benefits are taxable'],['Claims filed, Q4 2025',fmt(vals[vals.length-1]),'about 35,000 a quarter since 2024'],['Maryland on-time rate, 2025',a.MD[a.MD.length-1]+'%','US average '+a.US[a.US.length-1]+'% (87% standard)'],['Pandemic peak claims','885,937','in one quarter (Q2 2020)']]
+  .map(x=>`<div class="card kpi"><div class="l">${x[0]}</div><div class="v">${x[1]}</div><div class="n">${x[2]}</div></div>`).join('');
+ new Chart('d1',{type:'bar',data:{labels:Object.keys(cq),datasets:[{data:vals,backgroundColor:C.blue}]},options:{...base,scales:{y:{min:0,ticks:{callback:v=>fmt(v)}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmt(c.parsed.y)+' claims'}}}}});
+ new Chart('d2',{type:'line',data:{labels:a.years,datasets:[{label:'Maryland',data:a.MD,borderColor:C.red,backgroundColor:C.red,borderWidth:3,pointRadius:4,tension:.2},{label:'US average',data:a.US,borderColor:C.mute,backgroundColor:C.mute,borderWidth:2,pointRadius:3,borderDash:[2,3],tension:.2},{label:'87% standard',data:a.years.map(()=>87),borderColor:C.green,borderDash:[6,5],pointRadius:0,borderWidth:1.5}]},options:{...base,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%'}}}}});
+}
+// ---- challenges
+const CH=[
+ {t:'ID fraud',c:'Identity theft surged during the pandemic and fraud keeps evolving. Before 2020, under 1% of claims were flagged; the share peaked at 35% in Q1 2023 and was 18% in Q4 2025.',
+  r:['TrueID and US Post Office identity verification','Fraud-finding tools (for example LexisNexis, Unified Fraud Response) check identity and IP address','Systems flag changes to sensitive data such as bank accounts for review','A dedicated team manually reviews flagged employers'],
+  a:'Each flagged claim needs manual review, so fraud workload competes with honest claimants for the same staff. A queue-level dashboard (flag rate, review age, release rate) would show how much of the late-payment tail is fraud screening and where false positives slow legitimate claimants.'},
+ {t:'Funding',c:'Federal administrative funding has stayed largely flat while costs rose, and no longer fully covers earned workload. The US Department of Labor rescinded $25 million in multi-year UI modernization grants.',
+  r:['FY26 budget bill: allocate 0.15% of the taxable wage base to core operations, customer service, IT modernization, fraud prevention and reemployment services'],
+  a:'With limited money, targeting matters. Forecasting weekly claims (see the Analytics page: 5.7% backtest error) lets managers match staffing to expected demand instead of staffing for the peak all year.'},
+ {t:'Customer support',c:'During the pandemic in-person help ended and the call center was outsourced, costing nearly $300 million from FY21 to FY25.',
+  r:['State-staffed call center re-established in 2025 for under $9 million a year','In-person help reopened at Baltimore headquarters and three American Job Centers (Prince George\'s, Montgomery, Baltimore County), serving over 14,000 residents in 2025'],
+  a:'Track call-back wait, first-contact resolution and which issue types drive repeat calls. Calls are a leading indicator of processing problems before they show up in the federal 21-day measure.'},
+ {t:'Technology',c:'The BEACON claims system launched in 2020 with major technical problems that slowed claims, and the loss of federal funds has limited fixes.',
+  r:['UI website redesigned in September 2025 to help people file accurate, complete claims faster','Grant-funded work with Harvard and Stanford to streamline processes and find bottlenecks'],
+  a:'Bottleneck work needs stage-level timestamps (filed, identity verified, adjudicated, approved, paid). With those, process mining can show exactly where days are lost. That is the data I would ask for first.'}];
+function buildCh(){
+ $('chs').innerHTML=CH.map((c,i)=>`<button onclick="pickCh(${i})">${c.t}</button>`).join('');pickCh(0);
+ const fs=D.fraud_share;
+ new Chart('d3',{type:'bar',data:{labels:Object.keys(fs),datasets:[{data:Object.values(fs),backgroundColor:C.red}]},options:{...base,scales:{y:{min:0,max:40,ticks:{callback:v=>v+'%'}},x:{ticks:{maxRotation:60}}}}});
+ const f=D.fv;
+ $('fvnote').textContent='Quarterly, Q4 2022 to Q4 2025. Correlation '+D.fv_corr+' across '+f.length+' quarters: a weak tendency for on-time rates to be higher when fraud share is lower. Too few points to be conclusive.';
+ new Chart('d4',{type:'line',data:{labels:f.map(r=>r.q),datasets:[{label:'Fraud share (%)',data:f.map(r=>r.fraud),borderColor:C.red,backgroundColor:C.red,pointRadius:3,borderWidth:2},{label:'Paid within 21 days (%)',data:f.map(r=>r.timely),borderColor:C.blue,backgroundColor:C.blue,pointRadius:3,borderWidth:2}]},options:{...base,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%'}},x:{ticks:{maxRotation:60}}}}});
+}
+function pickCh(i){[...$('chs').children].forEach((b,j)=>b.classList.toggle('on',i===j));const c=CH[i];
+ $('chbody').innerHTML=`<div class="pair"><div class="ch"><b>Challenge</b><p style="margin:4px 0">${c.c}</p></div><div class="rs"><b>Department response</b><ul style="margin:4px 0;padding-left:18px">${c.r.map(x=>'<li>'+x+'</li>').join('')}</ul></div></div><div class="an" style="margin-top:12px"><b>Analyst angle</b><p style="margin:4px 0">${c.a}</p></div>`}
+// ---- overpayment timeline
+const TL=[['2020','Collections paused','Claims jumped from about 161,000 in 2019 to 1.7 million in 2020, and $6.85 billion in benefits were paid in 2020 and 2021. The department paused active overpayment collection and did not consistently resume until 2023.'],
+['Nov 2021','Lawsuit','Maryland was sued over alleged due-process violations in its overpayment recovery process (Gorres et al. v. Robinson).'],
+['Jan 2022','Settlement','The settlement required the department to stop collections and set up a process to notify claimants of appeal rights and the chance to seek a hardship waiver.'],
+['Mar 2022','$484M recovered','Maryland recovered $484 million from a financial institution, in previously frozen UI benefits.'],
+['Sep 2023','Determinations restart','The department restarted issuing overpayment determinations for new claims.'],
+['Jun 2025','$520M recovered','Maryland recovered $520 million from a financial institution, in previously frozen UI benefits.'],
+['Dec 2025','Retroactive process','A retroactive process began to pursue recovery of over $1 billion, with about 184,000 notices mailed and support for people who need to verify identity or report fraud. Part of this reflects overpayments in the January 2026 state audit, largely federal CARES Act money.']];
+$('tl').innerHTML=TL.map((x,i)=>`<button onclick="pickTl(${i})"><b>${x[0]}</b><span>${x[1]}</span></button>`).join('');
+function pickTl(i){[...$('tl').children].forEach((b,j)=>b.classList.toggle('on',i===j));$('tld').innerHTML=`<b>${TL[i][0]}: ${TL[i][1]}</b><p style="margin:4px 0 0">${TL[i][2]}</p>`}pickTl(0);
+// ---- wage enforcement
+function buildWage(){
+ const w=D.wages;
+ new Chart('d5',{type:'bar',data:{labels:Object.keys(w),datasets:[{data:Object.values(w),backgroundColor:C.green}]},options:{...base,scales:{y:{ticks:{callback:v=>'$'+(v/1e6).toFixed(1)+'M'}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'$'+fmt(c.parsed.y)}}}}});
+ const wf=D.wage_fraud;let h='<table><tr><th></th>'+wf.cols.map(c=>`<th>${c}</th>`).join('')+'</tr>';
+ Object.keys(wf).filter(k=>k!=='cols').forEach(k=>{h+=`<tr><td>${k}</td>`+wf[k].map(v=>`<td>${fmt(v)}</td>`).join('')+'</tr>'});$('wf').innerHTML=h+'</table>';
+}
+show(TABS.some(t=>'#'+t[0]===location.hash)?location.hash.slice(1):'who');
+</script></body></html>

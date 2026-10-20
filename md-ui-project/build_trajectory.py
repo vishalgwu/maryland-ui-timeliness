@@ -43,7 +43,7 @@ ax.plot(proj.month, proj.central.clip(upper=100), color='#1d4e89', lw=2, ls=':',
 ax.fill_between(proj.month, proj.pessimistic.clip(upper=100), proj.optimistic.clip(upper=100), color='#1d4e89', alpha=.15, label='80% slope range')
 ax.axhline(TARGET, color='#2a9d6f', lw=1.5)
 ax.text(r.index[2], TARGET + .8, '87% federal standard', color='#2a9d6f', fontsize=9)
-ax.set_ylim(50, 100); ax.set_ylabel('% first payments within 21 days')
+ax.set_ylim(10, 100); ax.set_ylabel('% first payments within 21 days')
 ax.set_title(f'Recovery trajectory: at the current pace Maryland reaches 87% around {reach(central)}', loc='left', fontweight='bold')
 ax.legend(loc='lower right', frameon=False, fontsize=9)
 for s in ('top', 'right'): ax.spines[s].set_visible(False)

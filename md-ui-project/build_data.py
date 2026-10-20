@@ -4,15 +4,16 @@ import pandas as pd, json, os
 RAW = os.path.join(os.path.dirname(__file__), '..', 'raw')
 OUT = os.path.join(os.path.dirname(__file__), 'data')
 
-# ---- ETA 9050: 96 cols = 24 groups of 4 [Total, UI, UCFE, UCX]; groups alternate intrastate/interstate
-# per 7-day band: <=7, 8-14, 15-21, 22-28, ... ; we use the Total column of each group.
+# ---- ETA 9050: 96 cols = 24 groups of 4 [Total, UI, UCFE, UCX]; groups alternate intrastate/interstate.
+# Pair 0 (groups 0,1) = ALL first payments; pairs 1..11 = 7-day lapse bands: <=7, 8-14, 15-21, 22-28, ... 64-70, >70.
+# We use the Total column of each group. (Verified: bands sum to pair 0, and annual results match MD Labor's
+# published chart, e.g. MD 2025 = 69.3%, US 2025 = 83.4%, Jun 2020 = 14.1%.)
 t = pd.read_csv(f'{RAW}/ar9050.csv')
 t['month'] = pd.to_datetime(t['rptdate']).dt.to_period('M').dt.to_timestamp()
 grp = lambda i: t[f'c{4*i+1}']
-t['total'] = sum(grp(i) for i in range(24))
-for k, (name, gs) in {'d14': ('w14', range(0, 4)), 'd21': ('w21', range(0, 6))}.items():
+t['total'] = grp(0) + grp(1)
+for k, (name, gs) in {'d14': ('w14', range(2, 6)), 'd21': ('w21', range(2, 8))}.items():
     t[name] = sum(grp(i) for i in gs)
-t['over_70'] = grp(22) + grp(23)
 t['pct21'] = (t.w21 / t.total * 100).round(2)
 t['pct14'] = (t.w14 / t.total * 100).round(2)
 cols = ['st', 'month', 'total', 'w14', 'w21', 'pct14', 'pct21']
@@ -57,8 +58,8 @@ print(j[j.month.between('2020-02-01','2021-06-01')][['month','initial_claims','p
 tt = pd.read_csv(f'{RAW}/ar9050.csv'); tt = tt[tt.st == 'MD'].copy()
 tt['month'] = pd.to_datetime(tt.rptdate).dt.to_period('M').dt.to_timestamp()
 tt = tt[tt.month > tt.month.max() - pd.DateOffset(months=12)]
-labels = ['0-7', '8-14', '15-21', '22-28', '29-35', '36-42', '43-49', '50-56', '57-63', '64-70', '71-77', '78+']
-bands = pd.DataFrame({'days': labels, 'payments': [int(tt[f'c{8*p+1}'].sum() + tt[f'c{8*p+5}'].sum()) for p in range(12)]})
+labels = ['0-7', '8-14', '15-21', '22-28', '29-35', '36-42', '43-49', '50-56', '57-63', '64-70', '71+']
+bands = pd.DataFrame({'days': labels, 'payments': [int(tt[f'c{8*p+1}'].sum() + tt[f'c{8*p+5}'].sum()) for p in range(1, 12)]})
 bands['pct'] = (bands.payments / bands.payments.sum() * 100).round(1)
 bands.to_csv(f'{OUT}/md_delay_bands_trailing12m.csv', index=False)
 print(bands.to_string())

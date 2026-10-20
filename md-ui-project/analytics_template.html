@@ -24,13 +24,13 @@ input[type=range]{width:100%}
 </style></head><body><div class="wrap">
 <h1>Analytics Deep Dive: Why Are Payments Late?</h1>
 <p class="sub">Maryland unemployment insurance · what the data says about drivers, peers, seasonality and what comes next</p>
-<nav><a href="dashboard.html">Executive overview</a><a class="on" href="analytics_dashboard.html">Analytics deep dive</a></nav>
+<nav><a href="dashboard.html">Executive overview</a><a class="on" href="analytics_dashboard.html">Analytics deep dive</a><a href="department.html">Inside MD Labor</a></nav>
 <div class="kpis" id="kpis"></div>
 <div class="grid">
- <div class="card full"><h2>Maryland vs. neighbors and the national pool (rolling 12 months)</h2><p class="note">% of first payments within 21 days. Maryland has trailed every comparison group since 2021, and the gap is not closing quickly.</p><div class="box tall"><canvas id="c1"></canvas></div></div>
- <div class="card full"><h2>Seasonality heatmap: % paid within 21 days, by month</h2><p class="note">Each cell is one month. Red = weak, green = strong. Look for repeating patterns in specific calendar months.</p><div id="heat"></div><div class="legend">50% <i></i> 95%</div></div>
+ <div class="card full"><h2>Maryland vs. neighbors and the national pool (rolling 12 months)</h2><p class="note">% of first payments within 21 days. Maryland has been below the national pool in every month since January 2021.</p><div class="box tall"><canvas id="c1"></canvas></div></div>
+ <div class="card full"><h2>Seasonality heatmap: % paid within 21 days, by month</h2><p class="note">Each cell is one month. Red = weak, green = strong. Look for repeating patterns in specific calendar months.</p><div id="heat"></div><div class="legend">10% <i></i> 95%</div></div>
  <div class="card"><h2>Is it a volume problem? Claims vs. timeliness</h2><p class="note" id="scNote"></p><div class="box"><canvas id="c2"></canvas></div></div>
- <div class="card"><h2>Late payments per month</h2><p class="note">Count of first payments made after day 21. Since 2023 this has stayed in a narrow band (about 1,400 to 3,100) whatever the claim volume.</p><div class="box"><canvas id="c3"></canvas></div></div>
+ <div class="card"><h2>Late payments per month</h2><p class="note">Count of first payments made after day 21. Since 2023 this has stayed in a narrow band (about 900 to 2,400) whatever the claim volume.</p><div class="box"><canvas id="c3"></canvas></div></div>
  <div class="card full"><h2>Early-warning view: 13-week forecast of initial claims</h2><p class="note" id="fcNote"></p><div class="box tall"><canvas id="c4"></canvas></div></div>
  <div class="card full"><h2>Insured unemployment rate and continued weeks claimed</h2><p class="note">Monthly average of weekly figures: the size of the benefit caseload staff have to serve.</p><div class="box"><canvas id="c5"></canvas></div></div>
  <div class="card full"><h2>What-if: what would hitting a target mean?</h2>
@@ -60,10 +60,10 @@ document.getElementById('kpis').innerHTML=[
 // 1 peers
 const cols={MD:C.red,VA:C.blue,PA:C.green,DC:C.purple,'US pool':C.mute};
 new Chart('c1',{type:'line',data:{labels:R.months,datasets:['MD','VA','PA','DC','US pool'].map(k=>({label:k,data:R[k],borderColor:cols[k],backgroundColor:cols[k],pointRadius:0,borderWidth:k==='MD'?3:1.6,borderDash:k==='US pool'?[5,4]:[]}))},
- options:{...base,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'}},scales:{y:{min:40,max:100,ticks:{callback:v=>v+'%'}},x:{ticks:{maxTicksLimit:12,callback:yr}}}}});
+ options:{...base,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%'}},x:{ticks:{maxTicksLimit:12,callback:yr}}}}});
 // heatmap
 const mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const col=v=>{if(v==null)return 'transparent';const h=Math.max(0,Math.min(120,(v-50)/(95-50)*120));return `hsl(${h} 70% ${h>70?58:62}%)`};
+const col=v=>{if(v==null)return 'transparent';const h=Math.max(0,Math.min(120,(v-10)/(95-10)*120));return `hsl(${h} 70% ${h>70?58:62}%)`};
 let h='<table class="heat"><tr><th></th>'+mn.map(m=>`<th>${m}</th>`).join('')+'</tr>';
 Object.keys(D.heat).forEach(y=>{h+=`<tr><th>${y}</th>`+D.heat[y].map(v=>`<td style="background:${col(v)}">${v==null?'':Math.round(v)}</td>`).join('')+'</tr>'});
 document.getElementById('heat').innerHTML=h+'</table>';
@@ -71,7 +71,7 @@ document.getElementById('heat').innerHTML=h+'</table>';
 const grp=(p,l,c)=>({label:l,data:D.scatter.filter(s=>s.p===p).map(s=>({x:s.x,y:s.y,m:s.m})),backgroundColor:c,pointRadius:4});
 document.getElementById('scNote').textContent='Monthly initial claims vs % paid within 21 days (2015+). Correlation excluding COVID: '+D.corr+'; since 2022: '+D.corr_post+'. Higher volume has not made timeliness worse.';
 new Chart('c2',{type:'scatter',data:{datasets:[grp('pre','2015–Feb 2020',C.blue),grp('covid','COVID surge',C.red),grp('post','2021 onward',C.gold)]},
- options:{...base,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>c.raw.m+': '+fmt(c.raw.x)+' claims, '+c.raw.y+'%'}}},scales:{x:{type:'logarithmic',title:{display:true,text:'Initial claims in month (log)'},ticks:{callback:v=>[10000,30000,100000,300000].includes(v)?fmt(v):''}},y:{min:40,max:100,ticks:{callback:v=>v+'%'}}}}});
+ options:{...base,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>c.raw.m+': '+fmt(c.raw.x)+' claims, '+c.raw.y+'%'}}},scales:{x:{type:'logarithmic',title:{display:true,text:'Initial claims in month (log)'},ticks:{callback:v=>[10000,30000,100000,300000].includes(v)?fmt(v):''}},y:{min:0,max:100,ticks:{callback:v=>v+'%'}}}}});
 // 3 late payments
 const lp=D.late_series;
 new Chart('c3',{type:'bar',data:{labels:lp.map(r=>r.m),datasets:[{data:lp.map(r=>r.v),backgroundColor:C.gold}]},
@@ -101,8 +101,8 @@ function wi(){const t=+document.getElementById('tgt').value;document.getElementB
 document.getElementById('tgt').oninput=wi;wi();
 // takeaways
 document.getElementById('take').innerHTML=[
- '<b>Structural, not seasonal.</b> Maryland sits '+gap+' points below the national pool and below all three comparison groups; the heatmap shows no month that reliably recovers to 87%.',
- '<b>Not a volume problem.</b> Late payments run about '+fmt(D.late_mean)+' a month whether claims are 2,000 or 4,000 a week (correlation '+D.late_corr.toFixed(2)+'). That points to process bottlenecks, such as issue resolution and identity verification, rather than staffing for volume.',
+ '<b>Structural, not seasonal.</b> Maryland sits '+gap+' points below the national pool and below all three neighbors today; no month since the pandemic has reached the 87% standard.',
+ '<b>Not a volume problem.</b> Late payments run about '+fmt(D.late_mean)+' a month whether weekly claims run near 2,000 or near 4,000 (correlation '+D.late_corr.toFixed(2)+'). That points to process bottlenecks, such as issue resolution and identity verification, rather than staffing for volume.',
  '<b>The surges are predictable.</b> A simple seasonal model forecasts weekly claims within about '+D.mape+'% on a backtest, enough to plan staffing weeks ahead.',
  '<b>The prize is concrete.</b> Reaching 87% means roughly '+fmt(Math.round(.87*L.total-L.w21))+' more people paid on time each year.',
  '<b>Next data I would request:</b> claim-level timestamps (filed, adjudicated, approved, paid) and issue codes, to separate agency delay from claimant-driven delay.'
