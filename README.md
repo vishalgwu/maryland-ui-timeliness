@@ -51,6 +51,22 @@ Interactive page built from the Maryland Department of Labor's February 2026 bri
 
 ![Wage enforcement](docs/images/department_wage_enforcement.png)
 
+## State maps (Python and Plotly)
+
+[`md-ui-project/maps.html`](md-ui-project/maps.html) is an interactive page with three maps (hover a state for its numbers; the base map loads from Plotly's CDN, so open it online). Built with Python and Plotly by `md-ui-project/build_maps.py`; the data is in `data/state_map_data.csv`.
+
+**1. Where does Maryland stand?** On-time rate by state, last 12 months. Maryland is 72.5%, 48th of 53; 26 of 51 states (50 states plus DC) meet the 87% standard.
+
+![US map: on-time rate by state](docs/images/map_us_on_time.png)
+
+**2. Who has recovered?** Change versus 2019. Only 13 of 51 states are within 2 points of their 2019 rate. Maryland is down 19.2 points, the fifth-largest drop after Delaware (-39.7), Washington (-23.2), Massachusetts (-21.0) and Nevada (-20.8). North Carolina improved the most (+21.9).
+
+![US map: change since 2019](docs/images/map_us_recovery.png)
+
+**3. Maryland and its neighbors.** A regional zoom: Maryland sits between Virginia, West Virginia and Pennsylvania (all 88% to 94%) and Delaware (50.9%).
+
+![Maryland and neighbors map](docs/images/map_maryland_neighbors.png)
+
 ## Power BI version
 
 [`powerbi/MD-UI-Timeliness.pbip`](powerbi/MD-UI-Timeliness.pbip) is a Power BI Project (works in free Power BI Desktop) with the same analysis as the HTML dashboards: a semantic model (9 tables loaded from `md-ui-project/data`, DAX measures such as `On-Time % 12M`, `Payments Short Of 87%` and `Maryland Rank`) and a three-page report.
@@ -93,6 +109,7 @@ md-ui-project/
   build_analytics.py               # peers, heatmap, workload, claims forecast
   build_trajectory.py              # recovery-trajectory analysis + chart
   build_department.py              # department-reported figures + fraud-vs-timeliness
+  build_maps.py                    # state maps (Plotly) -> maps.html
   build_dashboard.py               # builds dashboard.html
   build_analytics_dashboard.py     # builds analytics_dashboard.html
   build_department_page.py         # builds department.html
@@ -115,6 +132,7 @@ python md-ui-project/build_data.py
 python md-ui-project/build_analytics.py
 python md-ui-project/build_trajectory.py
 python md-ui-project/build_department.py
+python md-ui-project/build_maps.py
 python md-ui-project/build_dashboard.py
 python md-ui-project/build_analytics_dashboard.py
 python md-ui-project/build_department_page.py
