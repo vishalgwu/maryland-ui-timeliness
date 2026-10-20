@@ -1,0 +1,47 @@
+table DelayBands
+	lineageTag: fd1ff9c4-2e8d-495c-8466-18023d81b819
+
+	measure 'Share Of Payments' = SUM(DelayBands[pct])
+		formatString: 0.0%
+		lineageTag: a75d6831-6c06-4640-bd84-52def41d8e27
+
+	column days
+		dataType: string
+		lineageTag: 0970107b-3cb4-48c7-a8c0-40b10ee3b1e7
+		summarizeBy: none
+		sourceColumn: days
+		sortByColumn: band_order
+
+	column payments
+		dataType: int64
+		formatString: #,0
+		lineageTag: a112f704-1487-459b-a7ae-404c9e7eae47
+		summarizeBy: none
+		sourceColumn: payments
+
+	column pct
+		dataType: double
+		formatString: 0.0%
+		lineageTag: dd2edc7a-e6fb-474a-9063-c2a827f5d0cb
+		summarizeBy: none
+		sourceColumn: pct
+
+	column band_order
+		dataType: int64
+		formatString: 0
+		lineageTag: c84ad34e-4793-42b1-86df-a69912f6000f
+		summarizeBy: none
+		sourceColumn: band_order
+
+	partition DelayBands = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(DataFolder & "md_delay_bands_trailing12m.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"days", type text}, {"payments", Int64.Type}, {"pct", type number}}, "en-US"),
+				Scaled = Table.TransformColumns(Typed, {{"pct", each _/100, type number}}),
+				Indexed = Table.AddIndexColumn(Scaled, "band_order", 1, 1, Int64.Type),
+				Final = Indexed
+			in
+				Final

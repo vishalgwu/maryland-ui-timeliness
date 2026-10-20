@@ -1,0 +1,52 @@
+table ClaimsForecast
+	lineageTag: 742a71be-0865-411b-af28-1fabd512c131
+
+	measure 'Forecast Claims' = SUM(ClaimsForecast[forecast])
+		formatString: #,0
+		lineageTag: 33b06f04-fd02-4f59-810c-7ad988f97db9
+
+	measure 'Forecast Low (80%)' = SUM(ClaimsForecast[low80])
+		formatString: #,0
+		lineageTag: a507b168-909b-4545-b07d-bc5cbe14e8a8
+
+	measure 'Forecast High (80%)' = SUM(ClaimsForecast[high80])
+		formatString: #,0
+		lineageTag: 7e0365f3-a5cc-4b66-8574-5dff6f26e2ff
+
+	column week_ending
+		dataType: dateTime
+		formatString: d mmm yyyy
+		lineageTag: 38b7866c-cd95-47e4-b614-d77836b6df1c
+		summarizeBy: none
+		sourceColumn: week_ending
+
+	column forecast
+		dataType: int64
+		formatString: #,0
+		lineageTag: be02c14c-6366-4f67-a36c-2dc765ea4107
+		summarizeBy: none
+		sourceColumn: forecast
+
+	column low80
+		dataType: int64
+		formatString: #,0
+		lineageTag: 3ef027cc-c861-4a27-9b0b-04d7dbc743d9
+		summarizeBy: none
+		sourceColumn: low80
+
+	column high80
+		dataType: int64
+		formatString: #,0
+		lineageTag: ae70cd37-d178-46cb-a401-cf5cd784347c
+		summarizeBy: none
+		sourceColumn: high80
+
+	partition ClaimsForecast = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(DataFolder & "forecast_initial_claims_13wk.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"week_ending", type date}, {"forecast", Int64.Type}, {"low80", Int64.Type}, {"high80", Int64.Type}}, "en-US")
+			in
+				Typed

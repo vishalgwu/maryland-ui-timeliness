@@ -1,0 +1,23 @@
+{
+  "name": "MD UI",
+  "dataColors": [
+    "#1d4e89",
+    "#c8102e",
+    "#e0a100",
+    "#2a9d6f",
+    "#7b4fb0",
+    "#5c6b7a",
+    "#6aa9ee",
+    "#e07a5f"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#14213D",
+  "tableAccent": "#1d4e89",
+  "textClasses": {
+    "title": {
+      "fontFace": "Segoe UI Semibold",
+      "fontSize": 12,
+      "color": "#14213D"
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "l1",
+  "position": {
+    "x": 20,
+    "y": 125,
+    "z": 0,
+    "height": 250,
+    "width": 620,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Timeliness"
+                    }
+                  },
+                  "Property": "month"
+                }
+              },
+              "queryRef": "Timeliness.month",
+              "nativeQueryRef": "month",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Timeliness"
+                    }
+                  },
+                  "Property": "On-Time %"
+                }
+              },
+              "queryRef": "Timeliness.On-Time %",
+              "nativeQueryRef": "On-Time %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Timeliness"
+                    }
+                  },
+                  "Property": "Standard"
+                }
+              },
+              "queryRef": "Timeliness.Standard",
+              "nativeQueryRef": "Standard"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Share of first payments within 21 days (87% standard)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

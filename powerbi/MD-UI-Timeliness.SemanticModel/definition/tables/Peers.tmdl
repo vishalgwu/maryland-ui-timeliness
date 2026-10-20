@@ -1,0 +1,38 @@
+table Peers
+	lineageTag: 6fc13518-af64-4e3f-964d-17b8f773e5a4
+
+	measure 'Rolling 12M On-Time %' = AVERAGE(Peers[Rate])
+		formatString: 0.0%
+		lineageTag: 57f9cf78-905b-4d92-a46d-eec19f0e208f
+
+	column month
+		dataType: dateTime
+		formatString: mmm yyyy
+		lineageTag: e7196c9c-2e9c-42e1-a8c9-91e944a864a9
+		summarizeBy: none
+		sourceColumn: month
+
+	column Region
+		dataType: string
+		lineageTag: 030f9819-599c-4f2c-abab-98edcd30aef7
+		summarizeBy: none
+		sourceColumn: Region
+
+	column Rate
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 07ba1b7b-2440-4e08-bf2a-9e33d8f6ef90
+		summarizeBy: none
+		sourceColumn: Rate
+
+	partition Peers = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(DataFolder & "rolling12m_21day_peers.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				MonthDate = Table.TransformColumns(Headers, {{"month", each Date.FromText(_ & "-01"), type date}}),
+				Long = Table.UnpivotOtherColumns(MonthDate, {"month"}, "Region", "Rate"),
+				Typed = Table.TransformColumns(Long, {{"Rate", each Number.FromText(_, "en-US") / 100, type number}})
+			in
+				Typed

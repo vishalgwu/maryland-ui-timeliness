@@ -1,0 +1,122 @@
+table Timeliness
+	lineageTag: 63ab9974-9041-47a4-bd6e-01633ffcfd04
+
+	measure 'First Payments' = SUM(Timeliness[total])
+		formatString: #,0
+		lineageTag: a129c859-cef4-4337-9500-31bacaca55c9
+
+	measure 'Paid Within 21 Days' = SUM(Timeliness[w21])
+		formatString: #,0
+		lineageTag: d8571d9b-9885-4a7b-b08e-0103ecf8e05c
+
+	measure 'On-Time %' = DIVIDE(SUM(Timeliness[w21]), SUM(Timeliness[total]))
+		formatString: 0.0%
+		lineageTag: d48c6a93-ce8a-4635-aff3-69666a9b1935
+
+	measure Standard = 0.87
+		formatString: 0%
+		lineageTag: 9db46cbf-25a8-45a2-b00c-c262a4194f10
+
+	measure 'Latest Month' = CALCULATE(MAX(Timeliness[month]), ALL(Timeliness))
+		formatString: mmm yyyy
+		lineageTag: 2cbd0209-44bf-4f41-9ab3-21c7657f7096
+
+	measure 'Latest Month On-Time %' = VAR m = [Latest Month] RETURN CALCULATE([On-Time %], ALL(Timeliness), Timeliness[month] = m)
+		formatString: 0.0%
+		lineageTag: b0b74614-1f53-4947-aee6-6c72da95175c
+
+	measure 'First Payments 12M' = VAR m = [Latest Month] RETURN CALCULATE([First Payments], ALL(Timeliness), Timeliness[month] > EDATE(m, -12), Timeliness[month] <= m)
+		formatString: #,0
+		lineageTag: 23ab4189-9e63-4a8d-a5e3-b66808009560
+
+	measure 'On-Time Payments 12M' = VAR m = [Latest Month] RETURN CALCULATE([Paid Within 21 Days], ALL(Timeliness), Timeliness[month] > EDATE(m, -12), Timeliness[month] <= m)
+		formatString: #,0
+		lineageTag: 48fb317e-c368-4ce6-acfa-9812a8164e72
+
+	measure 'On-Time % 12M' = DIVIDE([On-Time Payments 12M], [First Payments 12M])
+		formatString: 0.0%
+		lineageTag: df202c54-8c4c-4223-85e0-f2b30d44bceb
+
+	measure 'Gap To Standard (pts)' = ([Standard] - [On-Time % 12M]) * 100
+		formatString: 0.0
+		lineageTag: 830382c1-6126-4e00-99ed-6624d78a4411
+
+	measure 'Late Payments 12M' = [First Payments 12M] - [On-Time Payments 12M]
+		formatString: #,0
+		lineageTag: 1b4fc66d-24c5-49dc-accf-a3b8b217a957
+
+	measure 'Payments Short Of 87%' = ROUND([Standard] * [First Payments 12M] - [On-Time Payments 12M], 0)
+		formatString: #,0
+		lineageTag: bb67b454-47ee-4d21-99fc-25d2f5e57035
+
+	measure 'Late Payments' = SUM(Timeliness[late_payments])
+		formatString: #,0
+		lineageTag: 6b6734d5-a705-40a2-9471-bd27690e0362
+
+	column month
+		dataType: dateTime
+		formatString: mmm yyyy
+		lineageTag: 9a31dfbb-ce69-42eb-9cbd-df625cc1529d
+		summarizeBy: none
+		sourceColumn: month
+
+	column total
+		dataType: int64
+		formatString: #,0
+		lineageTag: 840810ad-968b-4969-ad6a-441ee920fed7
+		summarizeBy: none
+		sourceColumn: total
+
+	column w14
+		dataType: int64
+		formatString: #,0
+		lineageTag: 79860224-dd15-4756-a44d-fcdd8e399f37
+		summarizeBy: none
+		sourceColumn: w14
+
+	column w21
+		dataType: int64
+		formatString: #,0
+		lineageTag: 640d43d0-b7c8-46ea-ba36-632ef1a98191
+		summarizeBy: none
+		sourceColumn: w21
+
+	column pct14
+		dataType: double
+		formatString: 0.0%
+		lineageTag: cf365b80-2086-4bd3-8623-215d6bf5f2c5
+		summarizeBy: none
+		sourceColumn: pct14
+
+	column pct21
+		dataType: double
+		formatString: 0.0%
+		lineageTag: b49e7c7b-5179-48e6-92b3-362a250112d2
+		summarizeBy: none
+		sourceColumn: pct21
+
+	column benchmark_pct
+		dataType: double
+		formatString: 0.0%
+		lineageTag: bfad562e-b274-4038-b9de-bdc074063b02
+		summarizeBy: none
+		sourceColumn: benchmark_pct
+
+	column late_payments
+		dataType: int64
+		formatString: #,0
+		lineageTag: 161cd9ee-1b93-4cb5-b2ef-971084bd83a9
+		summarizeBy: none
+		sourceColumn: late_payments
+
+	partition Timeliness = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(DataFolder & "md_first_payment_timeliness_monthly.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"month", type date}, {"total", Int64.Type}, {"w14", Int64.Type}, {"w21", Int64.Type}, {"pct14", type number}, {"pct21", type number}, {"benchmark_pct", type number}, {"late_payments", Int64.Type}}, "en-US"),
+				Scaled = Table.TransformColumns(Typed, {{"pct14", each _/100, type number}, {"pct21", each _/100, type number}, {"benchmark_pct", each _/100, type number}}),
+				Final = Table.SelectRows(Scaled, each [month] >= #date(2015, 1, 1))
+			in
+				Final

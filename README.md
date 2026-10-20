@@ -51,6 +51,29 @@ Interactive page built from the Maryland Department of Labor's February 2026 bri
 
 ![Wage enforcement](docs/images/department_wage_enforcement.png)
 
+## Power BI version
+
+[`powerbi/MD-UI-Timeliness.pbip`](powerbi/MD-UI-Timeliness.pbip) is a Power BI Project (works in free Power BI Desktop) with the same analysis as the HTML dashboards: a semantic model (9 tables loaded from `md-ui-project/data`, DAX measures such as `On-Time % 12M`, `Payments Short Of 87%` and `Maryland Rank`) and a three-page report.
+
+| Page | What it shows |
+|---|---|
+| Executive overview | KPI cards, on-time trend vs the 87% standard, delay distribution, 53-jurisdiction ranking with Maryland highlighted |
+| Analytics deep dive | Maryland vs neighbors and national pool, 13-week claims forecast, late payments per month, weekly claims |
+| Inside MD Labor | Annual Maryland vs US, fraud share vs on-time rate, claims per quarter, wages recovered |
+
+![Power BI: Executive overview](docs/images/powerbi_overview.png)
+
+![Power BI: Analytics deep dive](docs/images/powerbi_analytics.png)
+
+![Power BI: Inside MD Labor](docs/images/powerbi_dept.png)
+
+**To open it:**
+1. Open `powerbi/MD-UI-Timeliness.pbip` in Power BI Desktop.
+2. If the data folder is in a different place on your machine: Home, Transform data, Edit parameters, and set `DataFolder` to the full path of `md-ui-project\data\` (with the trailing backslash).
+3. Click **Refresh now** on the yellow banner. Data is not stored in the project, so it loads on first open.
+
+The project is generated from the CSVs by `powerbi/build_powerbi.py` (re-run it after changing the data). The interactive elements of the HTML "Inside MD Labor" page (division explorer, challenge/response tabs, overpayment timeline) are HTML-only.
+
 ## Recovery trajectory
 
 A linear trend fitted to the rolling 12-month rate since January 2023 shows how long Maryland would take to reach 87% at its current pace.
@@ -72,7 +95,12 @@ md-ui-project/
   build_analytics_dashboard.py     # builds analytics_dashboard.html
   build_department_page.py         # builds department.html
   data/                            # clean CSVs (load straight into Power BI)
-docs/images/                       # README images
+powerbi/
+  MD-UI-Timeliness.pbip            # Power BI Project (open in Power BI Desktop)
+  MD-UI-Timeliness.SemanticModel/  # tables, DAX measures (TMDL)
+  MD-UI-Timeliness.Report/         # 3-page report definition (PBIR)
+  build_powerbi.py                 # regenerates the project from the CSVs
+docs/                              # Q&A and README images
 ```
 
 ## Run it

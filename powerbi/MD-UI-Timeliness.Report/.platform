@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "MD-UI-Timeliness"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "ed56af62-7911-4db3-9725-8a87beb59380"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "k5",
+  "position": {
+    "x": 1040,
+    "y": 20,
+    "z": 0,
+    "height": 90,
+    "width": 220,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Timeliness"
+                    }
+                  },
+                  "Property": "Payments Short Of 87%"
+                }
+              },
+              "queryRef": "Timeliness.Payments Short Of 87%",
+              "nativeQueryRef": "Payments Short Of 87%"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Short of 87% goal'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

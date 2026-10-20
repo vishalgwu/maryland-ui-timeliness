@@ -1,0 +1,79 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "d3",
+  "position": {
+    "x": 20,
+    "y": 365,
+    "z": 0,
+    "height": 340,
+    "width": 620,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DeptClaims"
+                    }
+                  },
+                  "Property": "quarter"
+                }
+              },
+              "queryRef": "DeptClaims.quarter",
+              "nativeQueryRef": "quarter",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DeptClaims"
+                    }
+                  },
+                  "Property": "Claims Filed"
+                }
+              },
+              "queryRef": "DeptClaims.Claims Filed",
+              "nativeQueryRef": "Claims Filed"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'UI claims filed per quarter (department-reported)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

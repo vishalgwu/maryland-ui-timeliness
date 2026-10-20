@@ -1,0 +1,43 @@
+table AnnualTimeliness
+	lineageTag: 1b8bf54f-4a05-4195-8acc-983640f0eebc
+
+	measure 'Maryland Annual %' = SUM(AnnualTimeliness[MD])
+		formatString: 0.0%
+		lineageTag: 88d918d4-6661-472f-a6f3-9f33231e5f6d
+
+	measure 'US Annual %' = SUM(AnnualTimeliness[US])
+		formatString: 0.0%
+		lineageTag: 03cd6207-a100-4bf5-b52b-74bbb3c6cb62
+
+	column y
+		dataType: int64
+		formatString: 0
+		lineageTag: 338acd8f-f482-4756-b180-3ddb311c3853
+		summarizeBy: none
+		sourceColumn: y
+
+	column MD
+		dataType: double
+		formatString: 0.0%
+		lineageTag: e0fe543b-f1ea-47ea-b80d-9761116c1f56
+		summarizeBy: none
+		sourceColumn: MD
+
+	column US
+		dataType: double
+		formatString: 0.0%
+		lineageTag: fccafdbd-d895-4a1e-ad06-a496d64696cd
+		summarizeBy: none
+		sourceColumn: US
+
+	partition AnnualTimeliness = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(DataFolder & "annual_timeliness_md_vs_us.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"y", Int64.Type}, {"MD", type number}, {"US", type number}}, "en-US"),
+				Scaled = Table.TransformColumns(Typed, {{"MD", each _/100, type number}, {"US", each _/100, type number}}),
+				Final = Scaled
+			in
+				Final

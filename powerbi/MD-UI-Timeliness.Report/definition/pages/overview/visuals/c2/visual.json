@@ -1,0 +1,79 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "c2",
+  "position": {
+    "x": 650,
+    "y": 125,
+    "z": 0,
+    "height": 250,
+    "width": 610,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DelayBands"
+                    }
+                  },
+                  "Property": "days"
+                }
+              },
+              "queryRef": "DelayBands.days",
+              "nativeQueryRef": "days",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DelayBands"
+                    }
+                  },
+                  "Property": "Share Of Payments"
+                }
+              },
+              "queryRef": "DelayBands.Share Of Payments",
+              "nativeQueryRef": "Share Of Payments"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'When payments go out (days from first compensable week)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

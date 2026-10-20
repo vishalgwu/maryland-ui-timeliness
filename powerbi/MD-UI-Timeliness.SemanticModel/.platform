@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "MD-UI-Timeliness"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "c4e8eb3d-6c60-43d8-9179-d980bfe86934"
+  }
+}

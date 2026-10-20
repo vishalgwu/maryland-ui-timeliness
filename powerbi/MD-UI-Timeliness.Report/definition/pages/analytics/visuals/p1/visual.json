@@ -1,0 +1,97 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "p1",
+  "position": {
+    "x": 20,
+    "y": 20,
+    "z": 0,
+    "height": 300,
+    "width": 1240,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Peers"
+                    }
+                  },
+                  "Property": "month"
+                }
+              },
+              "queryRef": "Peers.month",
+              "nativeQueryRef": "month",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Peers"
+                    }
+                  },
+                  "Property": "Rolling 12M On-Time %"
+                }
+              },
+              "queryRef": "Peers.Rolling 12M On-Time %",
+              "nativeQueryRef": "Rolling 12M On-Time %"
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Peers"
+                    }
+                  },
+                  "Property": "Region"
+                }
+              },
+              "queryRef": "Peers.Region",
+              "nativeQueryRef": "Region"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Maryland vs neighbors and national pool (rolling 12 months)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

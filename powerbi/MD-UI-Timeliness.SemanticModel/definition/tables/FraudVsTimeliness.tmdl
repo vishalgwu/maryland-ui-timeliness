@@ -1,0 +1,50 @@
+table FraudVsTimeliness
+	lineageTag: 8605dfdc-c05c-455f-88f0-8b87ddc152a7
+
+	measure 'Fraud Share %' = SUM(FraudVsTimeliness[fraud]) / 100
+		formatString: 0.0%
+		lineageTag: 86275aa4-a801-42f9-8eb0-ebc46fc75d94
+
+	measure 'Paid Within 21 Days (quarterly)' = SUM(FraudVsTimeliness[timely]) / 100
+		formatString: 0.0%
+		lineageTag: 09ccbc38-8679-45db-af53-e0765b0cf454
+
+	column q
+		dataType: string
+		lineageTag: 932047a2-965f-4497-b7e0-2823a64a62bb
+		summarizeBy: none
+		sourceColumn: q
+		sortByColumn: q_order
+
+	column fraud
+		dataType: double
+		formatString: 0.0
+		lineageTag: 1f2b01ca-877b-45ca-b6b2-38f3cbbf55a7
+		summarizeBy: none
+		sourceColumn: fraud
+
+	column timely
+		dataType: double
+		formatString: 0.0
+		lineageTag: a38e8f01-9d2e-4540-95c3-b21bcfec8f18
+		summarizeBy: none
+		sourceColumn: timely
+
+	column q_order
+		dataType: int64
+		formatString: 0
+		lineageTag: 0cf22292-5746-454b-9431-453b2e7a86cb
+		summarizeBy: none
+		sourceColumn: q_order
+
+	partition FraudVsTimeliness = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(DataFolder & "fraud_share_vs_timeliness_quarterly.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"q", type text}, {"fraud", type number}, {"timely", type number}}, "en-US"),
+				WithOrder = Table.AddColumn(Typed, "q_order", each Number.FromText(Text.End([q], 4)) * 10 + Number.FromText(Text.Middle([q], 1, 1)), Int64.Type),
+				Final = WithOrder
+			in
+				Final

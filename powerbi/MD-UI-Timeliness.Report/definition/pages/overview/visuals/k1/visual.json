@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "k1",
+  "position": {
+    "x": 20,
+    "y": 20,
+    "z": 0,
+    "height": 90,
+    "width": 240,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Timeliness"
+                    }
+                  },
+                  "Property": "On-Time % 12M"
+                }
+              },
+              "queryRef": "Timeliness.On-Time % 12M",
+              "nativeQueryRef": "On-Time % 12M"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'On-time rate, last 12 months'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

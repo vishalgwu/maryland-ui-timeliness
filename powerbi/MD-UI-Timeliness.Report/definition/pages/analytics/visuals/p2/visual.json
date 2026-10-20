@@ -1,0 +1,107 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "p2",
+  "position": {
+    "x": 20,
+    "y": 335,
+    "z": 0,
+    "height": 370,
+    "width": 410,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ClaimsForecast"
+                    }
+                  },
+                  "Property": "week_ending"
+                }
+              },
+              "queryRef": "ClaimsForecast.week_ending",
+              "nativeQueryRef": "week_ending",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ClaimsForecast"
+                    }
+                  },
+                  "Property": "Forecast Claims"
+                }
+              },
+              "queryRef": "ClaimsForecast.Forecast Claims",
+              "nativeQueryRef": "Forecast Claims"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ClaimsForecast"
+                    }
+                  },
+                  "Property": "Forecast Low (80%)"
+                }
+              },
+              "queryRef": "ClaimsForecast.Forecast Low (80%)",
+              "nativeQueryRef": "Forecast Low (80%)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ClaimsForecast"
+                    }
+                  },
+                  "Property": "Forecast High (80%)"
+                }
+              },
+              "queryRef": "ClaimsForecast.Forecast High (80%)",
+              "nativeQueryRef": "Forecast High (80%)"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'13-week forecast of initial claims (80% band)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

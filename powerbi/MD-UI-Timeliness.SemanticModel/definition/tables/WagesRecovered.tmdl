@@ -1,0 +1,39 @@
+table WagesRecovered
+	lineageTag: ebb2378b-8191-4813-94b8-676f55d8d1b4
+
+	measure 'Wages Recovered' = SUM(WagesRecovered[wages])
+		formatString: $#,0
+		lineageTag: 2a1ed6f5-520b-4a31-9dfc-8a8e054cb3e8
+
+	column fiscal_year
+		dataType: string
+		lineageTag: 69dd2e9c-15c7-4edf-8d79-7a119886182b
+		summarizeBy: none
+		sourceColumn: fiscal_year
+		sortByColumn: fy_order
+
+	column wages
+		dataType: int64
+		formatString: $#,0
+		lineageTag: 4d0641cd-f2bb-4924-b32c-6a6e33b031f2
+		summarizeBy: none
+		sourceColumn: wages
+
+	column fy_order
+		dataType: int64
+		formatString: 0
+		lineageTag: 3f7eb625-cc68-4eef-b5c5-52b6939c666e
+		summarizeBy: none
+		sourceColumn: fy_order
+
+	partition WagesRecovered = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(DataFolder & "dept_wages_recovered.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"fiscal_year", type text}, {"wages", Int64.Type}}, "en-US"),
+				Indexed = Table.AddIndexColumn(Typed, "fy_order", 1, 1, Int64.Type),
+				Final = Indexed
+			in
+				Final

@@ -1,0 +1,73 @@
+table StateComparison
+	lineageTag: 76494b3a-75f2-4913-a31a-1f80db0530aa
+
+	measure 'State On-Time % (others)' = IF(MAX(StateComparison[st]) <> "MD", SUM(StateComparison[pct21]))
+		formatString: 0.0%
+		lineageTag: 5e397c13-df59-4c0d-b057-c5ef560748af
+
+	measure 'State On-Time % (Maryland)' = IF(MAX(StateComparison[st]) = "MD", SUM(StateComparison[pct21]))
+		formatString: 0.0%
+		lineageTag: 9337c52f-2aaf-4366-9fa3-44df9146418d
+
+	measure 'State On-Time %' = SUM(StateComparison[pct21])
+		formatString: 0.0%
+		lineageTag: 5251a538-c0fc-4b8d-a6ec-97449bea84a7
+
+	measure 'Maryland Rank' = LOOKUPVALUE(StateComparison[rank], StateComparison[st], "MD")
+		formatString: 0
+		lineageTag: 560d6d3f-5b82-4c6c-8148-d6147c5a03aa
+
+	measure Jurisdictions = COUNTROWS(ALL(StateComparison))
+		formatString: 0
+		lineageTag: 06088b04-f8ab-49bd-8a99-9568f994f227
+
+	measure 'Median Jurisdiction %' = MEDIAN(StateComparison[pct21])
+		formatString: 0.0%
+		lineageTag: 53ee959e-1346-49e1-9b15-17080b1aff7a
+
+	column st
+		dataType: string
+		lineageTag: 38cdd8a5-ae43-4ed3-a521-1ddb7139a5fe
+		summarizeBy: none
+		sourceColumn: st
+		sortByColumn: rank
+
+	column w21
+		dataType: int64
+		formatString: #,0
+		lineageTag: 4c95f8e8-dc29-48b1-b6e4-cd980934c03e
+		summarizeBy: none
+		sourceColumn: w21
+
+	column total
+		dataType: int64
+		formatString: #,0
+		lineageTag: 2d828487-d6a4-4cfe-9ad1-d548982c4619
+		summarizeBy: none
+		sourceColumn: total
+
+	column pct21
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 978e2e27-8be5-41a9-928c-9c7a3fe68a9f
+		summarizeBy: none
+		sourceColumn: pct21
+
+	column rank
+		dataType: int64
+		formatString: 0
+		lineageTag: e17d6972-2c6e-4c8f-8e8a-52d80494ecf9
+		summarizeBy: none
+		sourceColumn: rank
+
+	partition StateComparison = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(DataFolder & "state_comparison_trailing12m.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"st", type text}, {"w21", Int64.Type}, {"total", Int64.Type}, {"pct21", type number}, {"rank", Int64.Type}}, "en-US"),
+				Scaled = Table.TransformColumns(Typed, {{"pct21", each _/100, type number}}),
+				Final = Scaled
+			in
+				Final

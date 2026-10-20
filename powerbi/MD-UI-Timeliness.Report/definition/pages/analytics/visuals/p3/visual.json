@@ -1,0 +1,79 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "p3",
+  "position": {
+    "x": 440,
+    "y": 335,
+    "z": 0,
+    "height": 370,
+    "width": 410,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Timeliness"
+                    }
+                  },
+                  "Property": "month"
+                }
+              },
+              "queryRef": "Timeliness.month",
+              "nativeQueryRef": "month",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Timeliness"
+                    }
+                  },
+                  "Property": "Late Payments"
+                }
+              },
+              "queryRef": "Timeliness.Late Payments",
+              "nativeQueryRef": "Late Payments"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Late first payments per month'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

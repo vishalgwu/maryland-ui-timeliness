@@ -40,6 +40,10 @@ corr = round(float(fv.fraud.corr(fv.timely)), 2)
 print('quarterly corr (fraud share vs % within 21 days), n =', len(fv), ':', corr)
 print(annual.T.to_string())
 
+# CSV exports of the department-reported series (used by the Power BI version)
+pd.DataFrame({'quarter': list(claims_q), 'claims': list(claims_q.values())}).to_csv(f'{D}/dept_claims_quarterly.csv', index=False)
+pd.DataFrame({'fiscal_year': list(wages_recovered), 'wages': list(wages_recovered.values())}).to_csv(f'{D}/dept_wages_recovered.csv', index=False)
+
 json.dump({'claims_q': claims_q, 'fraud_share': fraud_share, 'wages': wages_recovered, 'wage_fraud': wage_fraud,
            'annual': {'years': [int(y) for y in annual.index], 'MD': annual.MD.tolist(), 'US': annual.US.tolist()},
            'fv': rows, 'fv_corr': corr}, open(f'{D}/department.json', 'w'))

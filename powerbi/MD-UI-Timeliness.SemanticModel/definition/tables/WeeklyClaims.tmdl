@@ -1,0 +1,49 @@
+table WeeklyClaims
+	lineageTag: 47a7a756-0276-46a6-b151-dce709c218cf
+
+	measure 'Initial Claims' = SUM(WeeklyClaims[initial_claims])
+		formatString: #,0
+		lineageTag: d0b0e3a8-0c71-4ae3-856e-274d1f11b22a
+
+	measure 'Continued Weeks Claimed' = SUM(WeeklyClaims[continued_weeks_claimed])
+		formatString: #,0
+		lineageTag: 3d5587ec-7f6e-4fd6-b250-cf25e03ecea0
+
+	column week_ending
+		dataType: dateTime
+		formatString: d mmm yyyy
+		lineageTag: 8b7c70aa-4ab0-40dd-a766-a749ce0803dc
+		summarizeBy: none
+		sourceColumn: week_ending
+
+	column initial_claims
+		dataType: int64
+		formatString: #,0
+		lineageTag: 76591eb6-8547-4a65-baf4-8061c7c1bb40
+		summarizeBy: none
+		sourceColumn: initial_claims
+
+	column continued_weeks_claimed
+		dataType: int64
+		formatString: #,0
+		lineageTag: e641985c-d487-4f19-97a3-7daa3aede300
+		summarizeBy: none
+		sourceColumn: continued_weeks_claimed
+
+	column insured_unemp_rate
+		dataType: double
+		formatString: 0.00
+		lineageTag: 1375dacd-4661-4a50-9ac8-aed08a80c66b
+		summarizeBy: none
+		sourceColumn: insured_unemp_rate
+
+	partition WeeklyClaims = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(DataFolder & "md_weekly_claims.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"week_ending", type date}, {"initial_claims", Int64.Type}, {"continued_weeks_claimed", Int64.Type}, {"insured_unemp_rate", type number}}, "en-US"),
+				Final = Table.SelectRows(Typed, each [week_ending] >= #date(2019, 1, 1))
+			in
+				Final

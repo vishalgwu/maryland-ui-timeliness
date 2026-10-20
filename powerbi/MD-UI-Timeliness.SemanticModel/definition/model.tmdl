@@ -1,0 +1,17 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-US
+
+ref table Timeliness
+ref table StateComparison
+ref table WeeklyClaims
+ref table DelayBands
+ref table Peers
+ref table ClaimsForecast
+ref table AnnualTimeliness
+ref table FraudVsTimeliness
+ref table DeptClaims
+ref table WagesRecovered
+ref expression DataFolder

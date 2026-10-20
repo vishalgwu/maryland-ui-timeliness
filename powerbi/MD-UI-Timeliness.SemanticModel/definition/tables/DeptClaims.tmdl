@@ -1,0 +1,39 @@
+table DeptClaims
+	lineageTag: fbfe4b41-a769-4ded-b6f7-766635c3afa3
+
+	measure 'Claims Filed' = SUM(DeptClaims[claims])
+		formatString: #,0
+		lineageTag: 8e368067-0a13-476d-9bd2-45b85c489c52
+
+	column quarter
+		dataType: string
+		lineageTag: 92e93a70-b247-4d6e-a588-827a95573c44
+		summarizeBy: none
+		sourceColumn: quarter
+		sortByColumn: q_order
+
+	column claims
+		dataType: int64
+		formatString: #,0
+		lineageTag: 2a0013f7-c5c9-47f5-bee5-986452da1b86
+		summarizeBy: none
+		sourceColumn: claims
+
+	column q_order
+		dataType: int64
+		formatString: 0
+		lineageTag: 5e119c1c-3091-4daa-8450-e3c7c8404c21
+		summarizeBy: none
+		sourceColumn: q_order
+
+	partition DeptClaims = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(DataFolder & "dept_claims_quarterly.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				Typed = Table.TransformColumnTypes(Headers, {{"quarter", type text}, {"claims", Int64.Type}}, "en-US"),
+				WithOrder = Table.AddColumn(Typed, "q_order", each Number.FromText(Text.End([quarter], 4)) * 10 + Number.FromText(Text.Middle([quarter], 1, 1)), Int64.Type),
+				Final = WithOrder
+			in
+				Final
