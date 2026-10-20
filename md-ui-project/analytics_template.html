@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maryland UI Analytics Deep Dive</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#14213d;--mute:#5c6b7a;--line:#e3e7ec;--red:#c8102e;--gold:#e0a100;--green:#2a9d6f;--blue:#1d4e89;--gray:#c4cbd3;--purple:#7b4fb0}
+@media (prefers-color-scheme:dark){:root{--bg:#10151c;--card:#1a212b;--ink:#eef2f6;--mute:#9aa8b6;--line:#2b3542;--gray:#46515e;--blue:#6aa9ee;--purple:#b38be0}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:26px;margin:0}h2{font-size:16px;margin:0 0 2px}.sub{color:var(--mute);margin:4px 0 14px}
+nav{display:flex;gap:8px;margin-bottom:16px}nav a{padding:6px 14px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14px;background:var(--card)}nav a.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.kpi .v{font-size:32px;font-weight:700;line-height:1.1}.kpi .l{color:var(--mute);font-size:13px}.kpi .n{font-size:12px;color:var(--mute);margin-top:4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.full{grid-column:1/-1}.note{color:var(--mute);font-size:13px;margin:0 0 10px}
+.box{position:relative;height:300px}.tall{height:340px}
+table.heat{border-collapse:collapse;width:100%;font-size:12.5px;text-align:center}
+table.heat th{color:var(--mute);font-weight:500;padding:4px}table.heat td{padding:7px 2px;color:#111;border:2px solid var(--card);border-radius:4px}
+.legend{display:flex;align-items:center;gap:8px;color:var(--mute);font-size:12px;margin-top:8px}.legend i{display:inline-block;width:160px;height:10px;border-radius:5px;background:linear-gradient(90deg,hsl(0 70% 62%),hsl(60 70% 62%),hsl(120 55% 58%))}
+.what{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center}@media(max-width:820px){.what{grid-template-columns:1fr}}
+input[type=range]{width:100%}
+.big{font-size:34px;font-weight:700}.takeaways li{margin:6px 0}.takeaways ul{padding-left:20px;margin:8px 0 0}
+.foot{color:var(--mute);font-size:12px;margin-top:20px}
+</style></head><body><div class="wrap">
+<h1>Analytics Deep Dive: Why Are Payments Late?</h1>
+<p class="sub">Maryland unemployment insurance · what the data says about drivers, peers, seasonality and what comes next</p>
+<nav><a href="dashboard.html">Executive overview</a><a class="on" href="analytics_dashboard.html">Analytics deep dive</a></nav>
+<div class="kpis" id="kpis"></div>
+<div class="grid">
+ <div class="card full"><h2>Maryland vs. neighbors and the national pool (rolling 12 months)</h2><p class="note">% of first payments within 21 days. Maryland has trailed every comparison group since 2021, and the gap is not closing quickly.</p><div class="box tall"><canvas id="c1"></canvas></div></div>
+ <div class="card full"><h2>Seasonality heatmap: % paid within 21 days, by month</h2><p class="note">Each cell is one month. Red = weak, green = strong. Look for repeating patterns in specific calendar months.</p><div id="heat"></div><div class="legend">50% <i></i> 95%</div></div>
+ <div class="card"><h2>Is it a volume problem? Claims vs. timeliness</h2><p class="note" id="scNote"></p><div class="box"><canvas id="c2"></canvas></div></div>
+ <div class="card"><h2>Late payments per month</h2><p class="note">Count of first payments made after day 21. Since 2023 this has stayed in a narrow band (about 1,400 to 3,100) whatever the claim volume.</p><div class="box"><canvas id="c3"></canvas></div></div>
+ <div class="card full"><h2>Early-warning view: 13-week forecast of initial claims</h2><p class="note" id="fcNote"></p><div class="box tall"><canvas id="c4"></canvas></div></div>
+ <div class="card full"><h2>Insured unemployment rate and continued weeks claimed</h2><p class="note">Monthly average of weekly figures: the size of the benefit caseload staff have to serve.</p><div class="box"><canvas id="c5"></canvas></div></div>
+ <div class="card full"><h2>What-if: what would hitting a target mean?</h2>
+  <div class="what"><div><p class="note">Drag to set the 21-day payment target.</p><input id="tgt" type="range" min="79" max="95" step="0.5" value="87"><div style="margin-top:6px">Target: <b id="tgtv">87%</b></div></div>
+  <div><div class="big" id="gain"></div><div class="note" id="gainn"></div></div></div></div>
+ <div class="card full takeaways"><h2>Key takeaways for the panel</h2><ul id="take"></ul></div>
+</div>
+<p class="foot"><b>Methods:</b> data from US DOL ETA 9050 and ETA 539 (public). Rolling rate = sum of payments within 21 days ÷ sum of all first payments over 12 months. Forecast = average weekly pattern since mid-2022 scaled to the last 8 weeks' level; the 80% band uses the residual spread; accuracy is checked with a 13-week backtest. Correlation is not causation: the claims/timeliness relationship is descriptive.</p>
+</div>
+<script>/*CHARTJS*/</script>
+<script>
+const D=/*DATA*/;
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const C={red:css('--red'),gold:css('--gold'),green:css('--green'),blue:css('--blue'),gray:css('--gray'),mute:css('--mute'),line:css('--line'),purple:css('--purple')};
+Chart.defaults.color=C.mute;Chart.defaults.borderColor=C.line;Chart.defaults.font.family='system-ui,Segoe UI,sans-serif';
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const yr=function(v){return this.getLabelForValue(v).slice(0,4)};
+const base={maintainAspectRatio:false};
+const R=D.roll;
+const gap=(R['US pool'][R['US pool'].length-1]-R.MD[R.MD.length-1]).toFixed(1);
+document.getElementById('kpis').innerHTML=[
+ ['Gap to national pool (12-mo)',gap+' pts','Maryland '+R.MD[R.MD.length-1].toFixed(1)+'% vs pool '+R['US pool'][R['US pool'].length-1].toFixed(1)+'%',C.red],
+ ['Avg late payments / month (2023+)',fmt(D.late_mean),'about '+fmt(D.late_mean*12)+' a year',C.gold],
+ ['Claims vs late payments (corr.)',D.late_corr.toFixed(2),'near zero: not a volume story',C.blue],
+ ['Forecast backtest error',D.mape+'%','13-week MAPE on initial claims',C.green]
+].map(x=>`<div class="card kpi"><div class="l">${x[0]}</div><div class="v" style="color:${x[3]}">${x[1]}</div><div class="n">${x[2]}</div></div>`).join('');
+// 1 peers
+const cols={MD:C.red,VA:C.blue,PA:C.green,DC:C.purple,'US pool':C.mute};
+new Chart('c1',{type:'line',data:{labels:R.months,datasets:['MD','VA','PA','DC','US pool'].map(k=>({label:k,data:R[k],borderColor:cols[k],backgroundColor:cols[k],pointRadius:0,borderWidth:k==='MD'?3:1.6,borderDash:k==='US pool'?[5,4]:[]}))},
+ options:{...base,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'}},scales:{y:{min:40,max:100,ticks:{callback:v=>v+'%'}},x:{ticks:{maxTicksLimit:12,callback:yr}}}}});
+// heatmap
+const mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const col=v=>{if(v==null)return 'transparent';const h=Math.max(0,Math.min(120,(v-50)/(95-50)*120));return `hsl(${h} 70% ${h>70?58:62}%)`};
+let h='<table class="heat"><tr><th></th>'+mn.map(m=>`<th>${m}</th>`).join('')+'</tr>';
+Object.keys(D.heat).forEach(y=>{h+=`<tr><th>${y}</th>`+D.heat[y].map(v=>`<td style="background:${col(v)}">${v==null?'':Math.round(v)}</td>`).join('')+'</tr>'});
+document.getElementById('heat').innerHTML=h+'</table>';
+// 2 scatter
+const grp=(p,l,c)=>({label:l,data:D.scatter.filter(s=>s.p===p).map(s=>({x:s.x,y:s.y,m:s.m})),backgroundColor:c,pointRadius:4});
+document.getElementById('scNote').textContent='Monthly initial claims vs % paid within 21 days (2015+). Correlation excluding COVID: '+D.corr+'; since 2022: '+D.corr_post+'. Higher volume has not made timeliness worse.';
+new Chart('c2',{type:'scatter',data:{datasets:[grp('pre','2015–Feb 2020',C.blue),grp('covid','COVID surge',C.red),grp('post','2021 onward',C.gold)]},
+ options:{...base,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>c.raw.m+': '+fmt(c.raw.x)+' claims, '+c.raw.y+'%'}}},scales:{x:{type:'logarithmic',title:{display:true,text:'Initial claims in month (log)'},ticks:{callback:v=>[10000,30000,100000,300000].includes(v)?fmt(v):''}},y:{min:40,max:100,ticks:{callback:v=>v+'%'}}}}});
+// 3 late payments
+const lp=D.late_series;
+new Chart('c3',{type:'bar',data:{labels:lp.map(r=>r.m),datasets:[{data:lp.map(r=>r.v),backgroundColor:C.gold}]},
+ options:{...base,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmt(v)}},x:{ticks:{maxTicksLimit:8,callback:yr}}}}});
+// 4 forecast
+const H=D.hist,F=D.fc,labs=H.map(r=>r.d).concat(F.map(r=>r.week_ending)),pad=a=>Array(H.length-1).fill(null).concat(a);
+const lastH=H[H.length-1].ic;
+document.getElementById('fcNote').textContent='Next 13 weeks: forecast with 80% band. Backtest on the previous 13 weeks: average error '+D.mape+'%. Seasonal peak expected around the holidays; use it to schedule staff before the surge.';
+new Chart('c4',{type:'line',data:{labels:labs,datasets:[
+ {label:'Actual',data:H.map(r=>r.ic).concat(Array(F.length).fill(null)),borderColor:C.blue,pointRadius:0,borderWidth:2},
+ {label:'Forecast',data:pad([lastH].concat(F.map(r=>r.forecast))).slice(0,labs.length),borderColor:C.red,borderDash:[6,4],pointRadius:0,borderWidth:2},
+ {label:'80% band',data:pad([lastH].concat(F.map(r=>r.high80))).slice(0,labs.length),borderColor:'transparent',backgroundColor:C.red+'30',pointRadius:0,fill:'+1'},
+ {label:'80% low',data:pad([lastH].concat(F.map(r=>r.low80))).slice(0,labs.length),borderColor:'transparent',pointRadius:0}]},
+ options:{...base,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{filter:i=>!i.text.startsWith('80% low')}}},scales:{y:{min:0,ticks:{callback:v=>fmt(v)}},x:{ticks:{maxTicksLimit:10}}}}});
+// 5 caseload
+const I=D.iur;
+new Chart('c5',{type:'line',data:{labels:I.months,datasets:[
+ {label:'Continued weeks claimed (avg/week)',data:I.cw,borderColor:C.blue,pointRadius:0,borderWidth:2,yAxisID:'y',tension:.2},
+ {label:'Insured unemployment rate (%)',data:I.iur,borderColor:C.gold,pointRadius:0,borderWidth:2,yAxisID:'y1',tension:.2}]},
+ options:{...base,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'}},scales:{y:{type:'logarithmic',position:'left',ticks:{callback:v=>[10000,30000,100000,300000].includes(v)?fmt(v):''}},y1:{type:'logarithmic',position:'right',grid:{display:false},ticks:{callback:v=>[1,3,10].includes(v)?v+'%':''}},x:{ticks:{maxTicksLimit:12,callback:yr}}}}});
+// what-if
+const L=D.last12,cur=L.w21/L.total*100;
+function wi(){const t=+document.getElementById('tgt').value;document.getElementById('tgtv').textContent=t+'%';
+ const extra=Math.max(0,Math.round(t/100*L.total-L.w21));
+ document.getElementById('gain').textContent='+'+fmt(extra)+' on-time payments / year';
+ document.getElementById('gainn').textContent='From '+cur.toFixed(1)+'% today. That is about '+fmt(extra/12)+' more people paid within 21 days every month (last 12 months: '+fmt(L.total)+' first payments).'}
+document.getElementById('tgt').oninput=wi;wi();
+// takeaways
+document.getElementById('take').innerHTML=[
+ '<b>Structural, not seasonal.</b> Maryland sits '+gap+' points below the national pool and below all three comparison groups; the heatmap shows no month that reliably recovers to 87%.',
+ '<b>Not a volume problem.</b> Late payments run about '+fmt(D.late_mean)+' a month whether claims are 2,000 or 4,000 a week (correlation '+D.late_corr.toFixed(2)+'). That points to process bottlenecks, such as issue resolution and identity verification, rather than staffing for volume.',
+ '<b>The surges are predictable.</b> A simple seasonal model forecasts weekly claims within about '+D.mape+'% on a backtest, enough to plan staffing weeks ahead.',
+ '<b>The prize is concrete.</b> Reaching 87% means roughly '+fmt(Math.round(.87*L.total-L.w21))+' more people paid on time each year.',
+ '<b>Next data I would request:</b> claim-level timestamps (filed, adjudicated, approved, paid) and issue codes, to separate agency delay from claimant-driven delay.'
+].map(x=>'<li>'+x+'</li>').join('');
+</script></body></html>
