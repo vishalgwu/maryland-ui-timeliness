@@ -2,7 +2,7 @@
 
 ### 🔴 Live app: **[maryland-ui-pulse.vercel.app](https://maryland-ui-pulse.vercel.app)**
 
-[![Live site](docs/images/site_hero.png)](https://maryland-ui-pulse.vercel.app)
+[![Live site](docs/images/site_hero.jpg)](https://maryland-ui-pulse.vercel.app)
 
 An end-to-end analytics project on how quickly Maryland pays first unemployment insurance (UI) benefits, built from public US Department of Labor data. It has three interactive dashboards: a performance overview, an analytics deep dive (peer benchmark, seasonality, claims forecast, what-if), and a page on what the Maryland Department of Labor is doing about its challenges.
 
@@ -38,9 +38,13 @@ Other findings:
 - **Inside MD Labor**: challenges and the department's responses, the overpayment timeline and department-reported figures;
 - a **what-if slider** (drag a target on-time rate, see the extra people paid on time) and a methods section.
 
-![Interactive state map](docs/images/site_map.png)
+![Interactive state map](docs/images/site_map.jpg)
 
-![Trend explorer](docs/images/site_trends.png)
+![Trend explorer](docs/images/site_trends.jpg)
+
+![Context, not blame: the department's challenges and responses](docs/images/site_context.jpg)
+
+**Design:** a warm, editorial look built around Maryland's own palette. Paper and ink for readability, Maryland red reserved for Maryland, gold for the 87% federal standard, and muted slate and earth tones for every comparison, so the eye always lands on Maryland. The tone is deliberately human: it frames delays as workers waiting, and treats the Department's challenges as context, not blame.
 
 To rebuild its data: `python website/build_site_data.py` (after the `md-ui-project` scripts). To deploy: `cd website && vercel deploy --prod`.
 
