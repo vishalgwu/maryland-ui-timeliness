@@ -102,6 +102,10 @@ The CSVs in `md-ui-project/data/` can be loaded directly into Power BI Desktop (
 - Correlations are descriptive, not causal.
 - This is an independent analytical project, not affiliated with or endorsed by the Maryland Department of Labor.
 
+## Questions and answers
+
+[`docs/QA.md`](docs/QA.md) has short answers to the questions this analysis raises: why Maryland is low, whether it is a volume problem, how the numbers were checked, the backdating caveat, and what to do first.
+
 ## Possible next steps
 
 - Claim-level timestamps (filed, identity verified, adjudicated, approved, paid) and issue codes, to split agency-caused from claimant-caused delay and run process mining.
