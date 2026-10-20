@@ -67,7 +67,9 @@ Interactive page built from the Maryland Department of Labor's February 2026 bri
 
 ![Power BI: Inside MD Labor](docs/images/powerbi_dept.png)
 
-**To open it:**
+A ready-to-open [`MD-UI-Timeliness.pbix`](powerbi/MD-UI-Timeliness.pbix) (data embedded, no refresh needed) is also included.
+
+**To open the PBIP project:**
 1. Open `powerbi/MD-UI-Timeliness.pbip` in Power BI Desktop.
 2. If the data folder is in a different place on your machine: Home, Transform data, Edit parameters, and set `DataFolder` to the full path of `md-ui-project\data\` (with the trailing backslash).
 3. Click **Refresh now** on the yellow banner. Data is not stored in the project, so it loads on first open.
