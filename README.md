@@ -1,5 +1,9 @@
 # Maryland Unemployment Insurance: Are Claimants Paid Within 21 Days?
 
+### 🔴 Live app: **[maryland-ui-pulse.vercel.app](https://maryland-ui-pulse.vercel.app)**
+
+[![Live site](docs/images/site_hero.png)](https://maryland-ui-pulse.vercel.app)
+
 An end-to-end analytics project on how quickly Maryland pays first unemployment insurance (UI) benefits, built from public US Department of Labor data. It has three interactive dashboards: a performance overview, an analytics deep dive (peer benchmark, seasonality, claims forecast, what-if), and a page on what the Maryland Department of Labor is doing about its challenges.
 
 The federal timeliness standard is that **87% of first payments should go out within 21 days** of the first compensable week.
@@ -22,6 +26,23 @@ Other findings:
 - **Persistent gap.** Maryland has been below the national pool in every month since January 2021. Annual rate: 89.9% in 2018, 47.4% in 2022, 69.3% in 2025 (US average 83.4%).
 - **Surges are predictable.** A seasonal model forecasts weekly initial claims with a 5.7% average error on a 13-week backtest.
 - **Fraud pressure.** New suspected ID-fraud claims were under 1% of claims before 2020, peaked at 35% in Q1 2023 and were 18% in Q4 2025 (department figures). Quarterly on-time rates tend to be higher when that share is lower (correlation -0.32 over 13 quarters, so only suggestive).
+
+## Live web app
+
+**[maryland-ui-pulse.vercel.app](https://maryland-ui-pulse.vercel.app)** is the interactive version of this whole project, deployed on Vercel (source in [`website/`](website/), no build step):
+
+- an animated gauge and headline stats;
+- an **interactive US map** with three lenses (on-time rate, change since 2019, rank), hover tooltips, click-to-compare with Maryland, a state picker and a Mid-Atlantic zoom;
+- a **trend explorer** where you can overlay any state or the US pool on Maryland's rolling on-time rate;
+- the delay distribution, a claims-vs-late-payments scatter and a 13-week claims forecast;
+- **Inside MD Labor**: challenges and the department's responses, the overpayment timeline and department-reported figures;
+- a **what-if slider** (drag a target on-time rate, see the extra people paid on time) and a methods section.
+
+![Interactive state map](docs/images/site_map.png)
+
+![Trend explorer](docs/images/site_trends.png)
+
+To rebuild its data: `python website/build_site_data.py` (after the `md-ui-project` scripts). To deploy: `cd website && vercel deploy --prod`.
 
 ## Dashboards
 
