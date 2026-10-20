@@ -3,80 +3,90 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Maryland UI Pulse · Are claimants paid on time?</title>
-<meta name="description" content="Interactive analytics on how fast Maryland pays unemployment insurance, benchmarked against every US state. Maps, trends, forecasts and what the Department of Labor is doing about it.">
-<meta name="theme-color" content="#0b0b12">
+<title>Maryland UI Pulse · When the first payment matters most</title>
+<meta name="description" content="An independent, data-driven look at how quickly Maryland's unemployment insurance reaches workers, benchmarked against every state, and at the work under way to close the gap.">
+<meta name="theme-color" content="#FBF6EA">
 <meta property="og:title" content="Maryland UI Pulse">
-<meta property="og:description" content="72.5% of Maryland's first unemployment payments go out within 21 days. The federal standard is 87%. Explore the data.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='28' fill='%230b0b12'/%3E%3Ccircle cx='50' cy='50' r='26' fill='none' stroke='%23c6ff3d' stroke-width='12' stroke-dasharray='120 200' stroke-linecap='round' transform='rotate(-90 50 50)'/%3E%3C/svg%3E">
+<meta property="og:description" content="72.5% of Maryland's first unemployment payments reach workers within 21 days. The federal standard is 87%. An independent, respectful look at the data.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2315130F'/%3E%3Crect x='14' y='14' width='18' height='18' fill='%23F2B600'/%3E%3Crect x='32' y='14' width='18' height='18' fill='%23C8102E'/%3E%3Crect x='14' y='32' width='18' height='18' fill='%23C8102E'/%3E%3Crect x='32' y='32' width='18' height='18' fill='%23F2B600'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="aurora" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i></div>
-<div class="grain" aria-hidden="true"></div>
-<div class="cursor-glow" id="glow" aria-hidden="true"></div>
+<div class="stripe" aria-hidden="true"></div>
 
 <header class="nav" id="nav">
-  <a class="brand" href="#top"><span class="dot"></span>MD<b>UI</b> Pulse</a>
-  <nav>
-    <a href="#map">Map</a><a href="#trends">Trends</a><a href="#delay">Why late</a><a href="#dept">Inside MD Labor</a><a href="#whatif">What-if</a><a href="#method">Method</a>
+  <a class="brand" href="#top" aria-label="Maryland UI Pulse, home">
+    <span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <span class="brand-t">Maryland <b>UI Pulse</b></span>
+  </a>
+  <nav aria-label="Sections">
+    <a href="#map">The map</a><a href="#trends">The trend</a><a href="#delay">Why it's late</a><a href="#dept">The department's work</a><a href="#whatif">What-if</a><a href="#method">Method</a>
   </nav>
-  <a class="gh" href="https://github.com/vishalgwu/maryland-ui-timeliness" target="_blank" rel="noopener">GitHub ↗</a>
+  <a class="gh" href="https://github.com/vishalgwu/maryland-ui-timeliness" target="_blank" rel="noopener">View the code ↗</a>
 </header>
-
-<div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
 
 <main id="top">
 <!-- HERO -->
 <section class="hero">
   <div class="hero-copy reveal">
-    <span class="sticker">live data · <span id="asof">Sep 2026</span></span>
-    <h1>Maryland's unemployed are waiting.<br><span class="grad">Only <em id="heroPct">72.5</em>%</span> get paid on time.</h1>
-    <p class="lede">The federal standard says <b>87%</b> of first unemployment payments should go out within 21 days. This is where Maryland really stands, how it compares with every state, and what the Department of Labor is doing about it.</p>
-    <div class="cta"><a class="btn primary" href="#map">Explore the map ↓</a><a class="btn ghost" href="#method">How I calculated it</a></div>
+    <p class="eyebrow">Unemployment insurance · Maryland · <span id="asof">Sep 2026</span></p>
+    <h1>When a paycheck stops, the first payment matters most.</h1>
+    <p class="lede">Federal standards say <b>87%</b> of first unemployment payments should reach workers within 21 days. In Maryland the figure is <b class="red"><span id="heroPct">72.5</span>%</b>. This is an independent, respectful look at what the numbers say, how Maryland compares with every state, and the work already under way to close the gap.</p>
+    <div class="cta"><a class="btn primary" href="#map">See where Maryland stands</a><a class="btn ghost" href="#method">How the numbers were made</a></div>
   </div>
-  <div class="gauge-card glass reveal" id="gaugeCard">
-    <svg viewBox="0 0 220 220" class="gauge" aria-label="Gauge: 72.5 percent paid within 21 days, standard 87 percent">
-      <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff4fa3"/><stop offset=".55" stop-color="#ffb23f"/><stop offset="1" stop-color="#c6ff3d"/></linearGradient></defs>
-      <circle cx="110" cy="110" r="92" class="g-track"/>
-      <circle cx="110" cy="110" r="92" class="g-fill" id="gFill" pathLength="100" transform="rotate(-90 110 110)"/>
-      <g id="gMark"></g>
-    </svg>
-    <div class="gauge-center"><div class="gauge-num"><span id="gNum">0</span><small>%</small></div><div class="gauge-sub">paid within 21 days<br><span>last 12 months</span></div></div>
-    <div class="gauge-foot"><span><i class="k pink"></i>Maryland</span><span><i class="k lime"></i>Federal standard 87%</span></div>
+  <div class="hero-card reveal" id="heroCard">
+    <svg id="heroMD" class="hero-md" role="img" aria-label="Outline of the state of Maryland"></svg>
+    <div class="meter-wrap">
+      <div class="m-head"><span>Paid within 21 days · last 12 months</span><b id="mNum">72.5%</b></div>
+      <div class="meter" role="img" aria-label="Maryland 72.5 percent, US 84.9 percent, standard 87 percent">
+        <div class="m-track"><i class="m-fill" id="mFill"></i>
+          <span class="m-tick us" id="mUS"><em>US overall</em></span><span class="m-tick std" id="mStd"><em>Standard</em></span></div>
+        <div class="m-axis"><span>50%</span><span>75%</span><span>100%</span></div>
+      </div>
+      <p class="m-note">More than <b>1 in 4</b> first payments arrives after day 21.</p>
+    </div>
   </div>
 </section>
 
-<!-- KPI BENTO -->
-<section class="bento reveal">
-  <div class="glass tile t-rank"><div class="tl">Rank among jurisdictions</div><div class="tv"><span data-count="48" data-prefix="#">0</span><small>/53</small></div><div class="ts">median state: <b id="kMedian">86.3</b>%</div></div>
-  <div class="glass tile t-late"><div class="tl">Late first payments (12 mo)</div><div class="tv"><span data-count="17115">0</span></div><div class="ts">paid after day 21</div></div>
-  <div class="glass tile t-short accent"><div class="tl">Short of the 87% goal</div><div class="tv"><span data-count="9015">0</span></div><div class="ts">more on-time payments needed per year</div></div>
-  <div class="glass tile t-tail"><div class="tl">Waiting 70+ days</div><div class="tv"><span data-count="7.6" data-dec="1">0</span><small>%</small></div><div class="ts">about 1 in 13 payments</div></div>
+<!-- KPI ROW -->
+<section class="kpis reveal" aria-label="Key figures">
+  <div class="kpi"><div class="kl">Rank among 53 jurisdictions</div><div class="kv red"><span data-count="48" data-prefix="#">0</span><small>of 53</small></div><div class="ks">The median state pays <b id="kMedian">86.3</b>% on time.</div></div>
+  <div class="kpi"><div class="kl">First payments that arrived late</div><div class="kv"><span data-count="17115">0</span></div><div class="ks">in the last 12 months, after day 21.</div></div>
+  <div class="kpi"><div class="kl">Short of the 87% standard</div><div class="kv"><span data-count="9015">0</span></div><div class="ks">more on-time payments needed each year.</div></div>
+  <div class="kpi"><div class="kl">Waiting 70 days or more</div><div class="kv"><span data-count="7.6" data-dec="1">0</span><small>%</small></div><div class="ks">about 1 in 13 first payments.</div></div>
+</section>
+
+<!-- PEOPLE BAND -->
+<section class="people reveal">
+  <div class="people-in">
+    <p class="eyebrow gold">Behind the number</p>
+    <p class="quote"><span class="gold" data-count="17115">0</span> first payments arrived after day 21 last year. Each one is a worker waiting on rent, groceries and a plan for what comes next.</p>
+    <p class="people-sub">The goal of this project is simple: make the delay visible, understand where it comes from, and point to what could shorten the wait.</p>
+  </div>
 </section>
 
 <!-- MAP -->
 <section id="map" class="sec">
-  <div class="sec-head reveal"><span class="eyebrow">01 · the map</span><h2>Every state, one glance.</h2><p>Hover to read. Click a state to compare it with Maryland. Switch the lens to see who recovered since 2019.</p></div>
-  <div class="map-card glass reveal">
+  <div class="sec-head reveal"><p class="eyebrow">01 · The map</p><h2>How every state is doing, at a glance.</h2><p>Hover to read. Click a state to compare it with Maryland. Change the lens to see who has recovered since 2019.</p></div>
+  <div class="map-card card reveal">
     <div class="map-toolbar">
-      <div class="seg" id="metricSeg" role="tablist">
+      <div class="seg" id="metricSeg" role="tablist" aria-label="Map lens">
         <button class="on" data-m="now">On-time rate</button><button data-m="change">Change since 2019</button><button data-m="rank">Rank</button>
       </div>
       <div class="map-actions">
         <select id="stateSel" aria-label="Pick a state"></select>
-        <button class="chip" id="zoomMA">Zoom Mid-Atlantic</button><button class="chip" id="zoomReset">Reset</button>
+        <button class="chip" id="zoomMA">Mid-Atlantic view</button><button class="chip" id="zoomReset">Reset</button>
       </div>
     </div>
     <div class="map-body">
-      <div class="map-wrap"><svg id="usmap" viewBox="0 0 975 610" role="img" aria-label="Map of US states coloured by unemployment payment timeliness"></svg><div class="tip" id="tip"></div></div>
+      <div class="map-wrap"><svg id="usmap" viewBox="0 0 975 610" role="img" aria-label="Map of US states coloured by how quickly first unemployment payments are made"></svg><div class="tip" id="tip"></div></div>
       <aside class="map-side">
         <div class="sel" id="selPanel"></div>
         <canvas id="sparkSel" height="110"></canvas>
-        <div class="lists"><div><h4>Best 5</h4><ol id="topList"></ol></div><div><h4>Bottom 5</h4><ol id="botList"></ol></div></div>
+        <div class="lists"><div><h4>Fastest 5</h4><ol id="topList"></ol></div><div><h4>Slowest 5</h4><ol id="botList"></ol></div></div>
       </aside>
     </div>
     <div class="legend"><span id="legLo"></span><i id="legBar"></i><span id="legHi"></span><em id="legNote"></em></div>
@@ -85,68 +95,84 @@
 
 <!-- TRENDS -->
 <section id="trends" class="sec">
-  <div class="sec-head reveal"><span class="eyebrow">02 · the trend</span><h2>The cliff, and the climb back.</h2><p>Rolling 12-month on-time rate. Add any state to see how Maryland stacks up over time.</p></div>
+  <div class="sec-head reveal"><p class="eyebrow">02 · The trend</p><h2>A sharp fall in 2020, and a long climb back.</h2><p>The rolling 12-month on-time rate. Add any state to see how Maryland compares over time.</p></div>
   <div class="grid2">
-    <div class="glass card wide reveal">
-      <div class="card-top"><div class="chips" id="trendChips"></div><div class="seg small" id="rangeSeg"><button data-from="2015-01">2015+</button><button data-from="2019-01" class="on">2019+</button><button data-from="2022-01">2022+</button></div></div>
+    <div class="card wide reveal">
+      <div class="card-top"><div class="chips" id="trendChips"></div><div class="seg small" id="rangeSeg"><button data-from="2015-01">2015 on</button><button data-from="2019-01" class="on">2019 on</button><button data-from="2022-01">2022 on</button></div></div>
       <div class="box h340"><canvas id="trendChart"></canvas></div>
     </div>
-    <div class="glass card reveal"><h3>Maryland vs the US, by year</h3><p class="note">Matches the department's own published chart.</p><div class="box h260"><canvas id="annualChart"></canvas></div></div>
-    <div class="glass card reveal"><h3>The cliff in one stat</h3>
+    <div class="card reveal"><h3>Maryland and the US, by year</h3><p class="note">Matches the department's own published chart.</p><div class="box h260"><canvas id="annualChart"></canvas></div></div>
+    <div class="card reveal"><h3>The fall and the climb</h3>
       <div class="callouts">
-        <div><b class="c-lime">91.7%</b><span>2019, on time</span></div><div class="arr">→</div><div><b class="c-pink">47.4%</b><span>2022, the low</span></div><div class="arr">→</div><div><b class="c-cyan">69.3%</b><span>2025, climbing</span></div>
+        <div><b>91.7%</b><span>2019, on time</span></div><div class="arr">→</div><div><b class="red">47.4%</b><span>2022, the low point</span></div><div class="arr">→</div><div><b>69.3%</b><span>2025, recovering</span></div>
       </div>
-      <p class="note" style="margin-top:14px">The US average fell too, but recovered to 83.4%. Maryland is still about 14 points behind it.</p><h4 class="falls-h">Biggest falls since 2019 (percentage points)</h4><div class="falls" id="falls"></div>
+      <p class="note" style="margin-top:14px">Delays rose across the country when claims surged. The US average has recovered to 83.4%. Maryland is still about 14 points behind it.</p>
+      <h4 class="falls-h">Biggest falls since 2019 (percentage points)</h4><div class="falls" id="falls"></div>
     </div>
   </div>
 </section>
 
 <!-- DELAY -->
 <section id="delay" class="sec">
-  <div class="sec-head reveal"><span class="eyebrow">03 · why late</span><h2>It's not a volume problem.</h2><p>Late payments stay put whether claims spike or slump. The delay lives in a long tail, not in the average.</p></div>
+  <div class="sec-head reveal"><p class="eyebrow">03 · Why it's late</p><h2>It isn't about volume. It's about a long tail.</h2><p>Late payments stay about the same whether claims rise or fall. Most payments go out quickly; a smaller group waits a very long time.</p></div>
   <div class="grid3">
-    <div class="glass card reveal"><h3>When payments go out</h3><p class="note">Maryland, last 12 months. Days from the first compensable week.</p><div class="box h280"><canvas id="bandChart"></canvas></div></div>
-    <div class="glass card reveal"><h3>Claims vs late payments</h3><p class="note">Each dot is a month since 2023. <b id="corrTxt"></b></p><div class="box h280"><canvas id="scatterChart"></canvas></div></div>
-    <div class="glass card reveal"><h3>13-week claims forecast</h3><p class="note">Seasonal model, 80% band. Backtest error <b id="mapeTxt"></b>.</p><div class="box h280"><canvas id="fcChart"></canvas></div></div>
+    <div class="card reveal"><h3>When payments go out</h3><p class="note">Maryland, last 12 months. Days from the first compensable week.</p><div class="box h280"><canvas id="bandChart"></canvas></div></div>
+    <div class="card reveal"><h3>Claims and late payments</h3><p class="note">Each dot is one month since 2023. <b id="corrTxt"></b></p><div class="box h280"><canvas id="scatterChart"></canvas></div></div>
+    <div class="card reveal"><h3>The next 13 weeks of claims</h3><p class="note">A simple seasonal forecast with an 80% range. Past error: <b id="mapeTxt"></b>.</p><div class="box h280"><canvas id="fcChart"></canvas></div></div>
   </div>
 </section>
 
 <!-- DEPARTMENT -->
 <section id="dept" class="sec">
-  <div class="sec-head reveal"><span class="eyebrow">04 · inside MD Labor</span><h2>What the department is doing about it.</h2><p>From the Department's February 2026 legislative briefing. Pick a challenge, then see where analytics can help.</p></div>
-  <div class="glass card reveal">
-    <div class="seg" id="deptTabs"><button class="on" data-t="ch">Challenges → responses</button><button data-t="ov">Overpayment recovery</button><button data-t="num">By the numbers</button></div>
+  <div class="sec-head reveal"><p class="eyebrow">04 · The department's work</p><h2>Context, not blame.</h2><p>Maryland's Department of Labor has faced a perfect storm: a pandemic surge, record fraud attempts, flat federal funding and a difficult system launch. Here is what the Department has said it is doing, from its February 2026 legislative briefing.</p></div>
+  <div class="card reveal">
+    <div class="seg" id="deptTabs" role="tablist"><button class="on" data-t="ch">Challenges and responses</button><button data-t="ov">Overpayment recovery</button><button data-t="num">By the numbers</button></div>
     <div id="deptBody"></div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="values sec reveal">
+  <div class="sec-head"><p class="eyebrow">How this was approached</p><h2>Built with care for workers, and fairness to the people serving them.</h2></div>
+  <div class="vgrid">
+    <div class="vcard"><span class="vn">1</span><h3>People first</h3><p>Behind every statistic is someone waiting for help. Numbers here are always tied back to people, not treated as abstractions.</p></div>
+    <div class="vcard"><span class="vn">2</span><h3>Honest numbers</h3><p>Public data, open method, and a visible check against the Department's own published figures. Limits are stated plainly.</p></div>
+    <div class="vcard"><span class="vn">3</span><h3>Fair to the department</h3><p>Delays have real causes, from fraud to funding. The goal is to help find solutions, not to assign blame.</p></div>
   </div>
 </section>
 
 <!-- WHAT IF -->
 <section id="whatif" class="sec">
-  <div class="sec-head reveal"><span class="eyebrow">05 · what-if</span><h2>What would hitting a target mean?</h2><p>Drag the slider. Numbers are from the last 12 months of first payments.</p></div>
-  <div class="glass card whatif reveal">
-    <div class="wi-left"><label for="tgt">Target on-time rate</label><div class="wi-pct"><span id="tgtV">87</span>%</div><input id="tgt" type="range" min="72.5" max="95" step="0.5" value="87"><div class="wi-scale"><span>today 72.5%</span><span class="wi-std" style="left:64.4%">▲ 87% standard</span><span>95%</span></div></div>
-    <div class="wi-right"><div class="wi-big" id="wiBig">+9,015</div><div class="note">more people paid on time every year</div><div class="wi-bar"><i id="wiBar"></i></div><div class="note" id="wiMonth"></div></div>
+  <div class="sec-head reveal"><p class="eyebrow">05 · What-if</p><h2>What would reaching a target mean for people?</h2><p>Drag the slider. Figures use the last 12 months of first payments.</p></div>
+  <div class="card whatif reveal">
+    <div class="wi-left"><label for="tgt">Target on-time rate</label><div class="wi-pct"><span id="tgtV">87</span>%</div><input id="tgt" type="range" min="72.5" max="95" step="0.5" value="87"><div class="wi-scale"><span>today 72.5%</span><span class="wi-std" style="left:64.4%">▲ standard 87%</span><span>95%</span></div></div>
+    <div class="wi-right"><div class="wi-big" id="wiBig">+9,015</div><div class="note">more workers paid within 21 days every year</div><div class="wi-bar"><i id="wiBar"></i></div><div class="note" id="wiMonth"></div></div>
   </div>
 </section>
 
 <!-- METHOD -->
 <section id="method" class="sec">
-  <div class="sec-head reveal"><span class="eyebrow">06 · receipts</span><h2>How I calculated it (and checked it).</h2><p>All public data. All reproducible. Open source.</p></div>
+  <div class="sec-head reveal"><p class="eyebrow">06 · The method</p><h2>How the numbers were made, and checked.</h2><p>All public data. Fully reproducible. Open source.</p></div>
   <div class="grid3">
-    <div class="glass card reveal"><h3>The metric</h3><p class="note">On-time rate = first payments made within 21 days of the first compensable week ÷ all first payments (intrastate + interstate), from US DOL file <b>ETA 9050</b>. The 12-month rate sums payments first, then divides.</p></div>
-    <div class="glass card reveal"><h3>The sanity check</h3><p class="note">The file's delay bands add up to its total, and my annual results match the department's published chart: <b>Maryland 69.3%</b> and <b>US 83.4%</b> for 2025, and the reported <b>14.1%</b> low in June 2020. I caught and fixed an early column error this way.</p></div>
-    <div class="glass card reveal"><h3>The limits</h3><p class="note">The state says backdating inflates the federal metric, and public data can't separate that from agency delay. Correlations are descriptive, the forecast is illustrative, and department figures were read from its slides.</p></div>
+    <div class="card reveal"><h3>The measure</h3><p class="note">The on-time rate is the share of first payments made within 21 days of the first compensable week, from US Department of Labor file <b>ETA 9050</b> (intrastate and interstate). The 12-month rate adds payments first, then divides.</p></div>
+    <div class="card reveal"><h3>The check</h3><p class="note">The file's delay bands add up to its total, and the annual results match the Department's published chart: <b>Maryland 69.3%</b> and <b>US 83.4%</b> for 2025, plus the reported <b>14.1%</b> low in June 2020.</p></div>
+    <div class="card reveal"><h3>The limits</h3><p class="note">The Department says backdated claims can make the federal measure look worse, and public data cannot separate that from agency delay. Correlations are descriptive. The forecast is illustrative. Department figures were read from its slides.</p></div>
   </div>
   <div class="links reveal">
-    <a class="btn ghost" href="https://github.com/vishalgwu/maryland-ui-timeliness" target="_blank" rel="noopener">Source code on GitHub ↗</a>
+    <a class="btn ghost" href="https://github.com/vishalgwu/maryland-ui-timeliness" target="_blank" rel="noopener">Source code ↗</a>
     <a class="btn ghost" href="https://github.com/vishalgwu/maryland-ui-timeliness/tree/main/powerbi" target="_blank" rel="noopener">Power BI report ↗</a>
-    <a class="btn ghost" href="https://github.com/vishalgwu/maryland-ui-timeliness/blob/main/docs/QA.md" target="_blank" rel="noopener">Q&amp;A ↗</a>
-    <a class="btn ghost" href="https://oui.doleta.gov/unemploy/DataDownloads.asp" target="_blank" rel="noopener">Data: US DOL ↗</a>
+    <a class="btn ghost" href="https://github.com/vishalgwu/maryland-ui-timeliness/blob/main/docs/QA.md" target="_blank" rel="noopener">Questions and answers ↗</a>
+    <a class="btn ghost" href="https://oui.doleta.gov/unemploy/DataDownloads.asp" target="_blank" rel="noopener">US DOL data ↗</a>
   </div>
 </section>
 </main>
 
-<footer class="foot">Independent analytics project built on public US Department of Labor data. Not affiliated with or endorsed by the Maryland Department of Labor. Department figures are from its Feb 2026 briefing to the House Government, Labor and Elections Committee.</footer>
+<footer class="foot">
+  <div class="foot-in">
+    <div class="foot-brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><b>Maryland UI Pulse</b></div>
+    <p>An independent analytics project built on public US Department of Labor data, with respect for the people who rely on unemployment insurance and the staff who deliver it. It is not affiliated with or endorsed by the Maryland Department of Labor. Department figures come from its February 2026 briefing to the House Government, Labor and Elections Committee.</p>
+  </div>
+</footer>
 
 <script src="vendor/d3.min.js"></script>
 <script src="vendor/topojson-client.min.js"></script>
